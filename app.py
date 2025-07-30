@@ -150,7 +150,7 @@ questions = [
         ]
     },
     {
-        "label": "Trustworthiness (Matt.5, pure in heart; 1 Cor.13, always trusts, always hopes)",
+        "label": "TRUSTWORTHINESS (Matt.5, pure in heart; 1 Cor.13, always trusts, always hopes)",
         "anchors": [
             "There is a general mistrust and suspicion between the members and leaders. There is open hostility and contempt against leaders and members.",
             "A few people sow discord, but a majority still affirm the pastor's leadership. The general mood of the congregation is to give the pastor the benefit of the doubt.",
