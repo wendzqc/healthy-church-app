@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 import os
+import re
 
 # === Global Color Map for Chart ===
 colors = [
@@ -69,7 +70,7 @@ def draw_custom_radar(scores, categories):
 
     ax_radar.plot(angles, [5.5]*len(angles), '--', color='#ffaa00', alpha=0.7)
     ax_radar.plot(angles, [8.5]*len(angles), '--', color='#00aa00', alpha=0.7)
-    ax_radar.set_title("Church Health Assessment - Radar Chart", fontsize=15, pad=20, fontweight='bold')
+    ax_radar.set_title("Church Health Assessment", fontsize=15, pad=20, fontweight='bold')
 
     ax_cont = fig.add_subplot(gs[1])
     gradient = np.linspace(1, 10, 256).reshape(1, 256)
@@ -217,7 +218,6 @@ st.write(f"**Interpretation:** {interpretation}")
 
 # Radar Chart
 st.subheader("🕸️ Radar Chart")
-import re
 
 # Extract main virtue: uppercase word(s) from the start of each label
 main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in questions]
