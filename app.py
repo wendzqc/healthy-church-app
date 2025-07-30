@@ -210,8 +210,10 @@ else:
 st.header("📊 Results")
 st.markdown(f"**Total Score:** {total} / 70")
 st.markdown(f"**Average Score:** {average:.2f}")
-st.markdown(f"**Health Status:**\n\n> _**{classification}**_")
-st.markdown(f"**Interpretation:**\n\n> {interpretation}")
+#st.markdown(f"**Health Status:**\n\n> _**{classification}**_")
+#st.markdown(f"**Interpretation:**\n\n> {interpretation}")
+st.write(f"**Health Status:** _{classification}_")
+st.write(f"**Interpretation:** {interpretation}")
 
 # Radar Chart
 st.subheader("🕸️ Radar Chart")
