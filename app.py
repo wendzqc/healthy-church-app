@@ -189,22 +189,29 @@ for q in questions:
 # Scoring
 total = sum(scores)
 average = total / len(scores)
+
 if average >= 8.5:
-    classification = "Thriving Health: Consistently reflects New Testament church characteristics"
+    classification = "Thriving Health"
+    interpretation = "Consistently reflects New Testament church characteristics"
 elif average >= 7.5:
-    classification = "Stable Health: Healthy foundation with clear growth opportunities"
+    classification = "Stable Health"
+    interpretation = "Healthy foundation with clear growth opportunities"
 elif average >= 6.5:
-    classification = "Moderate Concerns: Several vulnerabilities requiring focused discipleship"
+    classification = "Moderate Concerns"
+    interpretation = "Several vulnerabilities requiring focused discipleship"
 elif average >= 5.5:
-    classification = "Significant Issues: Multiple areas need urgent attention; sustainability concerns"
+    classification = "Significant Issues"
+    interpretation = "Multiple areas need urgent attention; sustainability concerns"
 else:
-    classification = "Critical Condition: Comprehensive renewal needed; reflects fundamental spiritual health problems"
+    classification = "Critical Condition"
+    interpretation = "Comprehensive renewal needed; reflects fundamental spiritual health problems"
 
 # Results
 st.header("📊 Results")
 st.markdown(f"**Total Score:** {total} / 70")
 st.markdown(f"**Average Score:** {average:.2f}")
 st.markdown(f"**Health Status:**\n\n> _**{classification}**_")
+st.markdown(f"**Interpretation:**\n\n> {interpretation}")
 
 # Radar Chart
 st.subheader("🕸️ Radar Chart")
