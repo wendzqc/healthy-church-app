@@ -104,7 +104,7 @@ Please reflect on your church honestly, then rate your church from **1 to 10**:
 """)
 
 # Generate and display scale
-generate_scale_image()
+#generate_scale_image()
 st.image("health_continuum_dark_green.png", use_container_width=True)
 
 # Questionnaire with anchors
