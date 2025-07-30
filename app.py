@@ -190,15 +190,15 @@ for q in questions:
 total = sum(scores)
 average = total / len(scores)
 if average >= 8.5:
-    classification = "Thriving Health"
+    classification = "Thriving Health: Consistently reflects New Testament church characteristics"
 elif average >= 7.5:
-    classification = "Stable Health"
+    classification = "Stable Health: Healthy foundation with clear growth opportunities"
 elif average >= 6.5:
-    classification = "Moderate Concerns"
+    classification = "Moderate Concerns: Several vulnerabilities requiring focused discipleship"
 elif average >= 5.5:
-    classification = "Significant Issues"
+    classification = "Significant Issues: Multiple areas need urgent attention; sustainability concerns"
 else:
-    classification = "Critical Condition"
+    classification = "Critical Condition: Comprehensive renewal needed; reflects fundamental spiritual health problems"
 
 # Results
 st.header("📊 Results")
