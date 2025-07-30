@@ -105,8 +105,16 @@ Please reflect on your church honestly, then rate your church from **1 to 10**:
 
 # Generate and display scale
 #generate_scale_image()
-st.image("health_continuum_dark_green.png", use_container_width=True)
-
+#st.image("health_continuum_dark_green.png", use_container_width=True)
+#import os
+st.write("Current directory:", os.getcwd())
+st.write("Files in current dir:", os.listdir())
+#st.image("health_continuum_dark_green.png", use_container_width=True)
+try:
+    st.image("health_continuum_dark_green.png", use_container_width=True)
+    st.success("✅ Image loaded successfully!")
+except Exception as e:
+    st.error(f"❌ Failed to load image: {e}")
 # Questionnaire with anchors
 questions = [
     {
