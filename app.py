@@ -204,7 +204,7 @@ else:
 st.header("📊 Results")
 st.markdown(f"**Total Score:** {total} / 70")
 st.markdown(f"**Average Score:** {average:.2f}")
-st.markdown(f"**Health Status:** `{classification}`")
+st.markdown(f"**Health Status:**\n\n> _**{classification}**_")
 
 # Radar Chart
 st.subheader("🕸️ Radar Chart")
