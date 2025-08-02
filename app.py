@@ -89,6 +89,10 @@ def draw_custom_radar(scores, categories):
 
 st.set_page_config(page_title="H.E.A.L.T.H.Y. Church Checklist", layout="centered")
 st.title("🧭 H.E.A.L.T.H.Y. Church Checklist")
+st.markdown(
+    "<div style='font-size:13px; color:gray;'>by Jason Richard Tan</div>",
+    unsafe_allow_html=True
+)
 
 st.markdown("""
 For each area of church health, you’ll see **three descriptions**:
