@@ -145,7 +145,7 @@ Please reflect on your church honestly, then rate your church from **1 to 10**:
 )
 
 # If you bundle the PNG, keep the filename the same or update here.
-st.image("health_continuum_dark_green.png", use_column_width=True)
+st.image("health_continuum_dark_green.png", use_container_width=True)
 
 # The 7 questions
 questions = [
@@ -339,6 +339,7 @@ elif st.session_state.stage == "results":
             st.session_state.church_code = ""
             st.session_state.latest_scores = None
             st.rerun()
+
 
 
 
