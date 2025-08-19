@@ -288,7 +288,7 @@ elif st.session_state.stage == "survey":
             scores.append(score)
             st.markdown("---")
 
-        submitted = st.form_submit_button("✅ Submit Survey")
+        submitted = st.form_submit_button("✅ Submit Response")
         if submitted:
             try:
                 # Prepare and append row: Timestamp, Code, Q1..Q7
@@ -338,6 +338,7 @@ elif st.session_state.stage == "results":
             st.session_state.church_code = ""
             st.session_state.latest_scores = None
             st.rerun()
+
 
 
 
