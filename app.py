@@ -220,25 +220,24 @@ uploaded_file = st.file_uploader(
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
     expected_cols = [f"Q{i}" for i in range(1, 8)]
-    if all(col in df.columns for col in expected_cols):
+    
+    # Check if uploaded Excel has exactly the expected columns
+    if list(df.columns) != expected_cols:
+        st.error(f"⚠️ Invalid Excel format. The file must contain **exactly these columns** in order: {expected_cols}")
+    else:
         avg_scores = df[expected_cols].mean().tolist()
         average = float(np.mean(avg_scores))
-        # Average total per respondent (out of 70)
-        avg_total_per_respondent = df[expected_cols].sum(axis=1).mean()
-
+        
         classification, interpretation = classify(average)
-
+        
         st.header("📊 Results (from uploaded file)")
-       # st.markdown(f"**Average Total per Respondent:** {avg_total_per_respondent:.2f} (out of 70)")
         st.write(f"Number of respondents: {len(df)}")
         st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
         st.write(f"**Health Status:** _{classification}_")
         st.write(f"**Interpretation:** {interpretation}")
-
+        
         st.subheader("🕸️ Radar Chart")
         draw_custom_radar(avg_scores, main_virtues)
-    else:
-        st.error(f"Excel must have columns: {expected_cols}")
 
 st.divider()
 
@@ -339,6 +338,7 @@ elif st.session_state.stage == "results":
             st.session_state.church_code = ""
             st.session_state.latest_scores = None
             st.rerun()
+
 
 
 
