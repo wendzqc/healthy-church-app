@@ -4,25 +4,51 @@ Created on Wed Jul 30 16:56:21 2025
 
 @author: Desktop
 """
+# -*- coding: utf-8 -*-
+#"""
+#H.E.A.L.T.H.Y. Church Checklist
+#- Excel upload path (Q1..Q7), OR
+#- Live survey path gated by Church Code (writes to Google Sheets)
+#"""
+
+import gspread
+from google.oauth2.service_account import Credentials
+from datetime import datetime
 
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
-import os
 import re
 import pandas as pd
 
-# === Global Color Map for Chart ===
+# =========================
+# GOOGLE SHEETS SETUP
+# =========================
+# Put your JSON in the same folder and update the filename below if needed.
+SCOPE = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive",
+]
+CREDS_FILE = "healthy-church-app-credentials.json"   # <-- your service account JSON
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1CjJQUd0cvhb_gVl0nPfQ_RQc1o04x2jCeeKDEhGHnfI/edit?gid=0"  # <-- your sheet URL
+
+creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPE)
+client = gspread.authorize(creds)
+sheet = client.open_by_url(SHEET_URL).sheet1  # first worksheet
+
+# =========================
+# VISUALS
+# =========================
 colors = [
     "#ff0000", "#ff4500", "#ff8c00", "#ffaa00", "#ffff00", "#ffff00", "#ffff00",
     "#aaff00", "#55ff00", "#00ff00", "#008800"
 ]
 cmap = LinearSegmentedColormap.from_list("health_scale", colors, N=256)
 
-# === Draw Radar Chart ===
 def draw_custom_radar(scores, categories):
-    avg_score = np.mean(scores)
+    scores = list(scores)  # copy so we can append
+    avg_score = float(np.mean(scores))
     angles = np.linspace(0, 2 * np.pi, len(categories), endpoint=False).tolist()
     angles += angles[:1]
     scores += scores[:1]
@@ -41,15 +67,22 @@ def draw_custom_radar(scores, categories):
     ax_radar.plot(angles, scores, 'o-', linewidth=2, color='#333333', alpha=0.7)
     ax_radar.fill(angles, scores, color=cmap((avg_score - 1)/9.0), alpha=0.25)
 
-    for i, (angle, score) in enumerate(zip(angles[:-1], scores[:-1])):
+    for angle, score in zip(angles[:-1], scores[:-1]):
         ax_radar.plot(angle, score, 'o', markersize=8, color=cmap((score - 1)/9.0))
-        ax_radar.annotate(f"{score:.1f}", xy=(angle, score + 0.3), textcoords="offset points", xytext=(0, 5),
-                          ha='center', fontsize=9, fontweight='bold',
-                          bbox=dict(boxstyle="round,pad=0.2", fc=cmap((score - 1)/9.0), ec="black", alpha=0.7))
+        ax_radar.annotate(
+            f"{score:.1f}",
+            xy=(angle, score + 0.3),
+            textcoords="offset points", xytext=(0, 5),
+            ha='center', fontsize=9, fontweight='bold',
+            bbox=dict(boxstyle="round,pad=0.2", fc=cmap((score - 1)/9.0), ec="black", alpha=0.7)
+        )
 
-    ax_radar.annotate(f"Overall: {avg_score:.1f}/10", xy=(0.5, 0.5), xycoords='axes fraction', ha='center',
-                      fontsize=12, fontweight='bold',
-                      bbox=dict(boxstyle="round,pad=0.3", fc=cmap((avg_score - 1)/9.0), ec="black", alpha=0.8))
+    ax_radar.annotate(
+        f"Overall: {avg_score:.1f}/10",
+        xy=(0.5, 0.5), xycoords='axes fraction', ha='center',
+        fontsize=12, fontweight='bold',
+        bbox=dict(boxstyle="round,pad=0.3", fc=cmap((avg_score - 1)/9.0), ec="black", alpha=0.8)
+    )
 
     ax_radar.plot(angles, [5.5]*len(angles), '--', color='#ffaa00', alpha=0.7)
     ax_radar.plot(angles, [8.5]*len(angles), '--', color='#00aa00', alpha=0.7)
@@ -68,12 +101,32 @@ def draw_custom_radar(scores, categories):
 
     st.pyplot(fig)
 
-# === STREAMLIT APP ===
+def classify(average):
+    if average >= 8.5:
+        return ("Thriving Health",
+                "Consistently reflects New Testament church characteristics")
+    elif average >= 7.5:
+        return ("Stable Health",
+                "Healthy foundation with clear growth opportunities")
+    elif average >= 6.5:
+        return ("Moderate Concerns",
+                "Several vulnerabilities requiring focused discipleship")
+    elif average >= 5.5:
+        return ("Significant Issues",
+                "Multiple areas need urgent attention; sustainability concerns")
+    else:
+        return ("Critical Condition",
+                "Comprehensive renewal needed; reflects fundamental spiritual health problems")
+
+# =========================
+# APP
+# =========================
 st.set_page_config(page_title="H.E.A.L.T.H.Y. Church Checklist", layout="centered")
 st.title("🧭 H.E.A.L.T.H.Y. Church Checklist")
 st.markdown("<div style='font-size:13px; color:gray;'>by Jason Richard Tan</div>", unsafe_allow_html=True)
 
-st.markdown("""
+st.markdown(
+    """
 For each area of church health, you’ll see **three descriptions**:
 
 - One that reflects an **unhealthy pattern**  
@@ -85,103 +138,202 @@ Please reflect on your church honestly, then rate your church from **1 to 10**:
 - **1–3** → Closely resembles the unhealthy description  
 - **4–7** → Somewhere in between; growing in this area  
 - **8–10** → Strongly reflects the healthy description
-""")
+"""
+)
 
-# Image
-st.image("health_continuum_dark_green.png", use_container_width=True)
+# If you bundle the PNG, keep the filename the same or update here.
+st.image("health_continuum_dark_green.png", use_column_width=True)
 
-# Questionnaire
+# The 7 questions
 questions = [
-    {"label":"HUMILITY (Matt 5, meek; 1 Cor 13, not boastful, not proud, not self-seeking)","anchors":["There is a spirit of competition, boasting, and arrogance, especially in board meetings, planning, and events. No one offers an apology after a heated argument.","There was a time when the leaders sought forgiveness as a community before God and with each other, but it was a long time ago. ","People regard each other better than themselves (Phil. 2:3). There is genuine respect for each other’s place in the community."]},
-    {"label":"ENDURANCE in the Faith. (Gal. 5, patience, faithfulness; Matt 5, faithful in poverty, endures persecution; 1 Cor 13, always perseveres)","anchors":["People are ready to leave the church if they have an option, or they are willing to stay in the church as long as no one changes the status quo.","People are willing to do ministry beyond Sunday worship for as long as it is convenient. ","The community genuinely exemplifies faithfulness, sacrifice, and endurance in the faith despite persecution, poverty, or difficulty."]},
-    {"label":"AUTHENTICITY (1 Cor 13, kind, not envious, not boastful, not proud, not rude, not self-seeking; Gal. 5, joy gentleness, self-control; Matt 5, merciful)","anchors":["People come to church only to fulfill a religious expectation or because they are used to it. When the service ends, the worship hall is empty within a few minutes.","A few people linger to have fellowship after the service for extended fellowship or prayer.","People are genuinely kind, hospitable, gentle, and merciful. They share resources with each other and would go the extra mile to help someone in need. They even visit the sick and pray for those in need."]},
-    {"label":"LOVE (1 Cor. 13, …but have not love, I am nothing. Gal. 5, love)","anchors":["There is hostility, selfish ambition, factions, and discord within the community. There is hatred between leaders and members.","Members are generally amicable to each other but lack the depth of friendship. If given a chance, they are willing to come together to build meaningful relationships.","You sense that members, in general, truly love each other. They often linger for fellowship and prayer and even share meals after the service. There is much laughter, joy, and peace in the community, and they are excited to see each other in church."]},
-    {"label":"TRUSTWORTHINESS (Matt.5, pure in heart; 1 Cor.13, always trusts, always hopes)","anchors":["There is a general mistrust and suspicion between the members and leaders. There is open hostility and contempt against leaders and members.","A few people sow discord, but a majority still affirm the pastor's leadership. The general mood of the congregation is to give the pastor the benefit of the doubt.","The congregation fully trusts the church's leadership. The leaders seek to emulate a life consistent with God’s Word, living, leading, serving, and loving biblically as Christ intended them to do."]},
-    {"label":"HARMONY (Gal. 5, peace; Matt. 5, peacemaker; 1 Cor. 13, it keeps no record of wrongs)","anchors":["There is a spirit of discord, selfish ambition, jealousy, fighting, gossip, slander, and offensive language. People have left the church, but no one seems to care to reach out to them.","Offenses have been made in the past, and there are no efforts to address them. However, the community is more sensitive about not repeating the same mistake they did.","There is forgiveness, general peace, and harmony within the community. Although there are arguments and misunderstandings, they do not let these get in the way of their relationship. Leaders and members are quick to apologize and acknowledge their faults when necessary."]},
-    {"label":"YEARNING for truth (1 Cor. 13, love does not delight in evil, but rejoices with the truth, …but have not love, I am nothing)","anchors":["People do not care what is preached or taught in church. The majority of attendees do not practice personal time in reading, praying, or studying God’s word.","People are into discipleship groups or care groups, but they are not willing to do anything new or beyond the four corners of the church.","People are eager to learn from the Scriptures and to grow in the faith. They read and study on their own. There is excitement around the study of God’s word, disciple-making, serving the community, and living our lives as believers in their community."]}
+    {
+        "label": "HUMILITY (Matt 5, meek; 1 Cor 13, not boastful, not proud, not self-seeking)",
+        "anchors": [
+            "There is a spirit of competition, boasting, and arrogance, especially in board meetings, planning, and events. No one offers an apology after a heated argument.",
+            "There was a time when the leaders sought forgiveness as a community before God and with each other, but it was a long time ago. ",
+            "People regard each other better than themselves (Phil. 2:3). There is genuine respect for each other’s place in the community."
+        ]
+    },
+    {
+        "label": "ENDURANCE in the Faith. (Gal. 5, patience, faithfulness; Matt 5, faithful in poverty, endures persecution; 1 Cor 13, always perseveres)",
+        "anchors": [
+            "People are ready to leave the church if they have an option, or they are willing to stay in the church as long as no one changes the status quo.",
+            "People are willing to do ministry beyond Sunday worship for as long as it is convenient. ",
+            "The community genuinely exemplifies faithfulness, sacrifice, and endurance in the faith despite persecution, poverty, or difficulty."
+        ]
+    },
+    {
+        "label": "AUTHENTICITY (1 Cor 13, kind, not envious, not boastful, not proud, not rude, not self-seeking; Gal. 5, joy gentleness, self-control; Matt 5, merciful)",
+        "anchors": [
+            "People come to church only to fulfill a religious expectation or because they are used to it. When the service ends, the worship hall is empty within a few minutes.",
+            "A few people linger to have fellowship after the service for extended fellowship or prayer.",
+            "People are genuinely kind, hospitable, gentle, and merciful. They share resources with each other and would go the extra mile to help someone in need. They even visit the sick and pray for those in need."
+        ]
+    },
+    {
+        "label": "LOVE (1 Cor. 13, …but have not love, I am nothing. Gal. 5, love)",
+        "anchors": [
+            "There is hostility, selfish ambition, factions, and discord within the community. There is hatred between leaders and members.",
+            "Members are generally amicable to each other but lack the depth of friendship. If given a chance, they are willing to come together to build meaningful relationships.",
+            "You sense that members, in general, truly love each other. They often linger for fellowship and prayer and even share meals after the service. There is much laughter, joy, and peace in the community, and they are excited to see each other in church."
+        ]
+    },
+    {
+        "label": "TRUSTWORTHINESS (Matt.5, pure in heart; 1 Cor.13, always trusts, always hopes)",
+        "anchors": [
+            "There is a general mistrust and suspicion between the members and leaders. There is open hostility and contempt against leaders and members.",
+            "A few people sow discord, but a majority still affirm the pastor's leadership. The general mood of the congregation is to give the pastor the benefit of the doubt.",
+            "The congregation fully trusts the church's leadership. The leaders seek to emulate a life consistent with God’s Word, living, leading, serving, and loving biblically as Christ intended them to do."
+        ]
+    },
+    {
+        "label": "HARMONY (Gal. 5, peace; Matt. 5, peacemaker; 1 Cor. 13, it keeps no record of wrongs)",
+        "anchors": [
+            "There is a spirit of discord, selfish ambition, jealousy, fighting, gossip, slander, and offensive language. People have left the church, but no one seems to care to reach out to them.",
+            "Offenses have been made in the past, and there are no efforts to address them. However, the community is more sensitive about not repeating the same mistake they did.",
+            "There is forgiveness, general peace, and harmony within the community. Although there are arguments and misunderstandings, they do not let these get in the way of their relationship. Leaders and members are quick to apologize and acknowledge their faults when necessary."
+        ]
+    },
+    {
+        "label": "YEARNING for truth (1 Cor. 13, love does not delight in evil, but rejoices with the truth, …but have not love, I am nothing)",
+        "anchors": [
+            "People do not care what is preached or taught in church. The majority of attendees do not practice personal time in reading, praying, or studying God’s word.",
+            "People are into discipleship groups or care groups, but they are not willing to do anything new or beyond the four corners of the church.",
+            "People are eager to learn from the Scriptures and to grow in the faith. They read and study on their own. There is excitement around the study of God’s word, disciple-making, serving the community, and living our lives as believers in their community."
+        ]
+    }
 ]
 
-# --- File uploader ---
-uploaded_file = st.file_uploader("if you already have your church survey data, upload an Excel file with columns Q1-Q7 (1 row per respondent)", type=["xlsx", "xls"])
+main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in questions]
 
-scores = []
+# =========================
+# EXCEL UPLOAD PATH (optional)
+# =========================
+uploaded_file = st.file_uploader(
+    "If you already have survey data, upload an Excel with columns Q1–Q7 (1 row per respondent)",
+    type=["xlsx", "xls"]
+)
 
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
     expected_cols = [f"Q{i}" for i in range(1, 8)]
     if all(col in df.columns for col in expected_cols):
         avg_scores = df[expected_cols].mean().tolist()
-        total_score = df[expected_cols].sum(axis=1).sum() / len(df)
-        average = np.mean(avg_scores)
-        st.success(f"Excel file loaded! Average scores computed automatically.")
+        average = float(np.mean(avg_scores))
+        # Average total per respondent (out of 70)
+        avg_total_per_respondent = df[expected_cols].sum(axis=1).mean()
 
-        # Determine classification
-        if average >= 8.5:
-            classification = "Thriving Health"
-            interpretation = "Consistently reflects New Testament church characteristics"
-        elif average >= 7.5:
-            classification = "Stable Health"
-            interpretation = "Healthy foundation with clear growth opportunities"
-        elif average >= 6.5:
-            classification = "Moderate Concerns"
-            interpretation = "Several vulnerabilities requiring focused discipleship"
-        elif average >= 5.5:
-            classification = "Significant Issues"
-            interpretation = "Multiple areas need urgent attention; sustainability concerns"
-        else:
-            classification = "Critical Condition"
-            interpretation = "Comprehensive renewal needed; reflects fundamental spiritual health problems"
+        classification, interpretation = classify(average)
 
-        st.header("📊 Results")
-        st.markdown(f"**Total Score:** {total_score:.0f} (out of 70)")
-        st.markdown(f"**Average Score:** {average:.2f}")
+        st.header("📊 Results (from uploaded file)")
+       # st.markdown(f"**Average Total per Respondent:** {avg_total_per_respondent:.2f} (out of 70)")
+        st.write(f"Number of respondents: {len(df)}")
+        st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
         st.write(f"**Health Status:** _{classification}_")
         st.write(f"**Interpretation:** {interpretation}")
 
-        # Radar chart
         st.subheader("🕸️ Radar Chart")
-        main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in questions]
         draw_custom_radar(avg_scores, main_virtues)
     else:
         st.error(f"Excel must have columns: {expected_cols}")
-else:
-    # --- Old slider input method ---
-    st.subheader("📋 Questionnaire")
-    for q in questions:
-        st.subheader(q["label"])
-        st.markdown(f"**Unhealthy (1–3):** {q['anchors'][0]}")
-        st.markdown(f"**Moderate (4–7):** {q['anchors'][1]}")
-        st.markdown(f"**Healthy (8–10):** {q['anchors'][2]}")
-        score = st.slider("Score (1–10)", 1, 10, 5, key=q["label"])
-        scores.append(score)
-        st.markdown("---")
 
-    total = sum(scores)
-    average = total / len(scores)
+st.divider()
 
-    if average >= 8.5:
-        classification = "Thriving Health"
-        interpretation = "Consistently reflects New Testament church characteristics"
-    elif average >= 7.5:
-        classification = "Stable Health"
-        interpretation = "Healthy foundation with clear growth opportunities"
-    elif average >= 6.5:
-        classification = "Moderate Concerns"
-        interpretation = "Several vulnerabilities requiring focused discipleship"
-    elif average >= 5.5:
-        classification = "Significant Issues"
-        interpretation = "Multiple areas need urgent attention; sustainability concerns"
-    else:
-        classification = "Critical Condition"
-        interpretation = "Comprehensive renewal needed; reflects fundamental spiritual health problems"
+# =========================
+# LIVE SURVEY PATH (Church Code → Proceed → Submit)
+# =========================
+st.subheader("📋 Questionnaire")
 
-    st.header("📊 Results")
-    st.markdown(f"**Total Score:** {total} (out of 70)")
-    st.markdown(f"**Average Score:** {average:.2f}")
-    st.write(f"**Health Status:** _{classification}_")
-    st.write(f"**Interpretation:** {interpretation}")
+# Initialize session state
+if "stage" not in st.session_state:
+    st.session_state.stage = "await_code"   # await_code -> choice -> survey -> submitted -> results
+if "church_code" not in st.session_state:
+    st.session_state.church_code = ""
+if "latest_scores" not in st.session_state:
+    st.session_state.latest_scores = None
 
-    st.subheader("🕸️ Radar Chart")
-    main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in questions]
-    draw_custom_radar(scores[:], main_virtues)
+if st.session_state.stage == "await_code":
+    code = st.text_input("Enter your Church Code", value=st.session_state.church_code)
+    if st.button("➡️ Continue"):
+        if code.strip() == "":
+            st.warning("⚠️ Please enter a Church Code before continuing.")
+        else:
+            st.session_state.church_code = code.strip()
+            st.session_state.stage = "choice"
+            st.rerun()
+
+elif st.session_state.stage == "choice":
+    st.info(f"Church Code entered: **{st.session_state.church_code}**")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("📊 View Results Only"):
+            st.session_state.stage = "results"
+            st.rerun()
+    with col2:
+        if st.button("📝 Proceed to Survey"):
+            st.session_state.stage = "survey"
+            st.rerun()
+
+elif st.session_state.stage == "survey":
+    with st.form("survey_form", clear_on_submit=False):
+        scores = []
+        for q in questions:
+            st.subheader(q["label"])
+            st.markdown(f"**Unhealthy (1–3):** {q['anchors'][0]}")
+            st.markdown(f"**Moderate (4–7):** {q['anchors'][1]}")
+            st.markdown(f"**Healthy (8–10):** {q['anchors'][2]}")
+            score = st.slider("Score (1–10)", 1, 10, 5, key=q["label"])
+            scores.append(score)
+            st.markdown("---")
+
+        submitted = st.form_submit_button("✅ Submit Survey")
+        if submitted:
+            try:
+                # Prepare and append row: Timestamp, Code, Q1..Q7
+                new_row = [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), st.session_state.church_code] + scores
+                sheet.append_row(new_row)
+                st.session_state.latest_scores = scores
+                st.session_state.stage = "results"
+                st.success("✅ Your response has been submitted!")
+                st.rerun()
+            except Exception as e:
+                st.error(f"Could not submit to Google Sheets: {e}")
+
+elif st.session_state.stage == "results":
+    try:
+        data = sheet.get_all_records()
+        df = pd.DataFrame(data)
+        df_code = df[df["Code"] == st.session_state.church_code]
+
+        if not df_code.empty:
+            avg_scores = df_code[[f"Q{i}" for i in range(1, 8)]].mean().tolist()
+            average = float(np.mean(avg_scores))
+            classification, interpretation = classify(average)
+
+            st.header("📊 Aggregated Results")
+            st.markdown(f"**Number of Respondents (Code {st.session_state.church_code}):** {len(df_code)}")
+            st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
+            st.write(f"**Health Status:** _{classification}_")
+            st.write(f"**Interpretation:** {interpretation}")
+
+            st.subheader("🕸️ Radar Chart")
+            draw_custom_radar(avg_scores, main_virtues)
+        else:
+            st.warning("⚠️ No responses yet for this Church Code.")
+
+    except Exception as e:
+        st.error(f"Could not fetch results: {e}")
+
+    st.info(f"Church Code used: **{st.session_state.church_code}**")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("➕ Submit another response"):
+            st.session_state.stage = "survey"
+            st.rerun()
+    with col2:
+        if st.button("🔄 Enter a new Church Code"):
+            st.session_state.stage = "await_code"
+            st.session_state.church_code = ""
+            st.session_state.latest_scores = None
+            st.rerun()
 
