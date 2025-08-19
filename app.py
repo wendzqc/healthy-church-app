@@ -213,7 +213,7 @@ main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in ques
 # EXCEL UPLOAD PATH (optional)
 # =========================
 uploaded_file = st.file_uploader(
-    "If you already have survey data, upload an Excel with columns Q1–Q7 (1 row per respondent)",
+    "If you already have survey data, upload an Excel file containing only the columns Q1–Q7 (one row per respondent)",
     type=["xlsx", "xls"]
 )
 
@@ -338,6 +338,7 @@ elif st.session_state.stage == "results":
             st.session_state.church_code = ""
             st.session_state.latest_scores = None
             st.rerun()
+
 
 
 
