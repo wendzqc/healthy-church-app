@@ -25,17 +25,14 @@ import pandas as pd
 # =========================
 # GOOGLE SHEETS SETUP
 # =========================
-# Put your JSON in the same folder and update the filename below if needed.
-SCOPE = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive",
-]
-CREDS_FILE = "healthy-church-app-credentials.json"   # <-- your service account JSON
-SHEET_URL = "https://docs.google.com/spreadsheets/d/1CjJQUd0cvhb_gVl0nPfQ_RQc1o04x2jCeeKDEhGHnfI/edit?gid=0"  # <-- your sheet URL
 
-creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPE)
-client = gspread.authorize(creds)
-sheet = client.open_by_url(SHEET_URL).sheet1  # first worksheet
+creds = dict(st.secrets["gcp_service_account"])
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+credentials = ServiceAccountCredentials.from_json_keyfile_dict(creds, scope)
+client = gspread.authorize(credentials)
+
+# Use sheet from secrets
+sheet = client.open_by_url(st.secrets["app"]["sheet_url"]).sheet1
 
 # =========================
 # VISUALS
@@ -336,4 +333,5 @@ elif st.session_state.stage == "results":
             st.session_state.church_code = ""
             st.session_state.latest_scores = None
             st.rerun()
+
 
