@@ -11,9 +11,6 @@ Created on Wed Jul 30 16:56:21 2025
 #- Live survey path gated by Church Code (writes to Google Sheets)
 #"""
 
-import gspread
-from google.oauth2.service_account import Credentials
-from datetime import datetime
 
 import streamlit as st
 import numpy as np
@@ -22,16 +19,25 @@ from matplotlib.colors import LinearSegmentedColormap
 import re
 import pandas as pd
 
+import gspread
+#from google.oauth2.service_account import Credentials
+from datetime import datetime
+
+from google.oauth2.service_account import Credentials
+
 # =========================
 # GOOGLE SHEETS SETUP
 # =========================
+scope = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive",
+]
 
-creds = dict(st.secrets["gcp_service_account"])
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-credentials = ServiceAccountCredentials.from_json_keyfile_dict(creds, scope)
-client = gspread.authorize(credentials)
+# Load service account from Streamlit secrets
+creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scope)
+client = gspread.authorize(creds)
 
-# Use sheet from secrets
+# Open the sheet from secrets
 sheet = client.open_by_url(st.secrets["app"]["sheet_url"]).sheet1
 
 # =========================
@@ -333,5 +339,6 @@ elif st.session_state.stage == "results":
             st.session_state.church_code = ""
             st.session_state.latest_scores = None
             st.rerun()
+
 
 
