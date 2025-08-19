@@ -223,7 +223,7 @@ if uploaded_file:
     
     # Check if uploaded Excel has exactly the expected columns
     if list(df.columns) != expected_cols:
-        st.error(f"⚠️ Invalid Excel format. The file must contain **exactly these columns** in order: {expected_cols}")
+        st.error(f"⚠️ Invalid Excel format. The file must contain **only these columns** in order: {expected_cols}")
     else:
         avg_scores = df[expected_cols].mean().tolist()
         average = float(np.mean(avg_scores))
@@ -338,6 +338,7 @@ elif st.session_state.stage == "results":
             st.session_state.church_code = ""
             st.session_state.latest_scores = None
             st.rerun()
+
 
 
 
