@@ -1,3 +1,14 @@
-streamlit==1.35.0
-numpy==1.26.4
-matplotlib==3.8.4
+# Old pinned versions (for reference / rollback)
+# streamlit==1.35.0
+# numpy==1.26.4
+# matplotlib==3.8.4
+# pandas==2.2.1
+# openpyxl==3.1.3
+
+# Current minimal versions (safe ranges)
+streamlit>=1.35.0,<2.0.0
+numpy>=1.26.0,<2.0.0
+matplotlib>=3.8.0,<4.0.0
+pandas>=2.2.0,<3.0.0
+openpyxl>=3.1.0,<4.0.0
+
