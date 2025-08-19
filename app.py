@@ -255,7 +255,7 @@ if "latest_scores" not in st.session_state:
     st.session_state.latest_scores = None
 
 if st.session_state.stage == "await_code":
-    code = st.text_input("Enter your Church Code", value=st.session_state.church_code)
+    code = st.text_input("Enter your Church Code (you may use an existing code or create a new one; your responses will be grouped under this code)", value=st.session_state.church_code)
     if st.button("➡️ Continue"):
         if code.strip() == "":
             st.warning("⚠️ Please enter a Church Code before continuing.")
@@ -338,6 +338,7 @@ elif st.session_state.stage == "results":
             st.session_state.church_code = ""
             st.session_state.latest_scores = None
             st.rerun()
+
 
 
 
