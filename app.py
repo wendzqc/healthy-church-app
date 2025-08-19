@@ -88,7 +88,7 @@ Please reflect on your church honestly, then rate your church from **1 to 10**:
 """)
 
 # Image
-st.image("health_continuum_dark_green.png", use_column_width=True)
+st.image("health_continuum_dark_green.png", use_container_width=True)
 
 # Questionnaire
 questions = [
@@ -184,3 +184,4 @@ else:
     st.subheader("🕸️ Radar Chart")
     main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in questions]
     draw_custom_radar(scores[:], main_virtues)
+
