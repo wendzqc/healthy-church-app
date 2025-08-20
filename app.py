@@ -291,48 +291,61 @@ elif st.session_state.stage == "survey":
     if "last_submit_times" not in st.session_state:
         st.session_state.last_submit_times = {}
 
-    with st.form("survey_form", clear_on_submit=False):
-        scores = []
-        for q in questions:
+    now = datetime.now()
+    last_time = st.session_state.last_submit_times.get(st.session_state.church_code)
+    remaining = 0
+    if last_time:
+        elapsed = (now - last_time).total_seconds()
+        remaining = max(0, COOLDOWN - int(elapsed))
+
+    # If user already submitted (scores stored), show frozen sliders + results
+    if st.session_state.latest_scores:
+        st.success("✅ Your last response has been recorded.")
+        for q, score in zip(questions, st.session_state.latest_scores):
             st.subheader(q["label"])
-            st.markdown(f"**Unhealthy (1–3):** {q['anchors'][0]}")
-            st.markdown(f"**Moderate (4–7):** {q['anchors'][1]}")
-            st.markdown(f"**Healthy (8–10):** {q['anchors'][2]}")
-            score = st.slider("Score (1–10)", 1, 10, 5, key=q["label"])
-            scores.append(score)
+            st.slider("Score (1–10)", 1, 10, score, disabled=True, key=f"frozen_{q['label']}")
             st.markdown("---")
 
-        submitted = st.form_submit_button("✅ Submit Response")
+        # Show results below
+        st.session_state.stage = "results"
 
-        if submitted:
-            now = datetime.now()
-            last_time = st.session_state.last_submit_times.get(st.session_state.church_code)
-            remaining = 0
-            if last_time:
-                elapsed = (now - last_time).total_seconds()
-                remaining = max(0, COOLDOWN - int(elapsed))
+    else:
+        # Normal active form
+        with st.form("survey_form", clear_on_submit=False):
+            scores = []
+            for q in questions:
+                st.subheader(q["label"])
+                st.markdown(f"**Unhealthy (1–3):** {q['anchors'][0]}")
+                st.markdown(f"**Moderate (4–7):** {q['anchors'][1]}")
+                st.markdown(f"**Healthy (8–10):** {q['anchors'][2]}")
+                score = st.slider("Score (1–10)", 1, 10, 5, key=q["label"])
+                scores.append(score)
+                st.markdown("---")
 
-            if remaining > 0:
-                minutes = remaining // 60
-                seconds = remaining % 60
-                st.markdown(
-                    f"<p style='color:red; font-weight:bold;'>⏳ Please wait {minutes}m {seconds}s before submitting again for this code.</p>",
-                    unsafe_allow_html=True
-                )
-            else:
-                try:
-                    # Append to Google Sheets
-                    new_row = [now.strftime("%Y-%m-%d %H:%M:%S"), st.session_state.church_code] + scores
-                    sheet.append_row(new_row)
+            submitted = st.form_submit_button("✅ Submit Response")
 
-                    st.session_state.latest_scores = scores
-                    st.session_state.stage = "results"
-                    st.session_state.last_submit_times[st.session_state.church_code] = now
+            if submitted:
+                if remaining > 0:
+                    minutes = remaining // 60
+                    seconds = remaining % 60
+                    st.markdown(
+                        f"<p style='color:red; font-weight:bold;'>⏳ Please wait {minutes}m {seconds}s before submitting again for this code.</p>",
+                        unsafe_allow_html=True
+                    )
+                else:
+                    try:
+                        # Append to Google Sheets
+                        new_row = [now.strftime("%Y-%m-%d %H:%M:%S"), st.session_state.church_code] + scores
+                        sheet.append_row(new_row)
 
-                    st.success("✅ Your response has been submitted!")
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Could not submit to Google Sheets: {e}")
+                        st.session_state.latest_scores = scores
+                        st.session_state.last_submit_times[st.session_state.church_code] = now
+                        st.session_state.stage = "results"
+
+                        st.success("✅ Your response has been submitted!")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Could not submit to Google Sheets: {e}")
 
 elif st.session_state.stage == "results":
     try:
@@ -364,6 +377,7 @@ elif st.session_state.stage == "results":
     with col1:
         if st.button("➕ Submit another response"):
             st.session_state.stage = "survey"
+            st.session_state.latest_scores = None
             st.rerun()
     with col2:
         if st.button("🔄 Enter a new Church Code"):
@@ -371,16 +385,4 @@ elif st.session_state.stage == "results":
             st.session_state.church_code = ""
             st.session_state.latest_scores = None
             st.rerun()
-
-
-
-
-
-
-
-
-
-
-
-
 
