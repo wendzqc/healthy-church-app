@@ -298,16 +298,10 @@ elif st.session_state.stage == "survey":
         elapsed = (now - last_time).total_seconds()
         remaining = max(0, COOLDOWN - int(elapsed))
 
-    # If user already submitted (scores stored), show frozen sliders + results
-    if st.session_state.latest_scores:
-        st.success("✅ Your last response has been recorded.")
-        for q, score in zip(questions, st.session_state.latest_scores):
-            st.subheader(q["label"])
-            st.slider("Score (1–10)", 1, 10, score, disabled=True, key=f"frozen_{q['label']}")
-            st.markdown("---")
-
-        # Show results below
+    # If user already submitted, jump to results stage
+    if st.session_state.latest_scores:   # FIXED: don’t render here, just move to results
         st.session_state.stage = "results"
+        st.rerun()
 
     else:
         # Normal active form
@@ -347,9 +341,11 @@ elif st.session_state.stage == "survey":
                     except Exception as e:
                         st.error(f"Could not submit to Google Sheets: {e}")
 
+
 elif st.session_state.stage == "results":
     st.subheader("📋 Your Submitted Answers")
     if st.session_state.latest_scores is not None:
+        st.success("✅ Your last response has been recorded.")   # FIXED: moved success here
         for i, q in enumerate(questions):
             st.subheader(q["label"])
             st.markdown(f"**Unhealthy (1–3):** {q['anchors'][0]}")
