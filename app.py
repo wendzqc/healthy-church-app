@@ -348,6 +348,23 @@ elif st.session_state.stage == "survey":
                         st.error(f"Could not submit to Google Sheets: {e}")
 
 elif st.session_state.stage == "results":
+    st.subheader("📋 Your Submitted Answers")
+    if st.session_state.latest_scores is not None:
+        for i, q in enumerate(questions):
+            st.subheader(q["label"])
+            st.markdown(f"**Unhealthy (1–3):** {q['anchors'][0]}")
+            st.markdown(f"**Moderate (4–7):** {q['anchors'][1]}")
+            st.markdown(f"**Healthy (8–10):** {q['anchors'][2]}")
+            # Disabled slider showing their answer
+            st.slider("Score (1–10)", 1, 10, st.session_state.latest_scores[i],
+                      key=f"disabled_{q['label']}", disabled=True)
+            st.markdown("---")
+    else:
+        st.info("You haven’t submitted any response yet for this code.")
+
+    # ------------------------------
+    # Aggregated results for the code
+    # ------------------------------
     try:
         data = sheet.get_all_records()
         df = pd.DataFrame(data)
@@ -372,12 +389,12 @@ elif st.session_state.stage == "results":
     except Exception as e:
         st.error(f"Could not fetch results: {e}")
 
+    # Navigation buttons
     st.info(f"Church Code used: **{st.session_state.church_code}**")
     col1, col2 = st.columns(2)
     with col1:
         if st.button("➕ Submit another response"):
             st.session_state.stage = "survey"
-            st.session_state.latest_scores = None
             st.rerun()
     with col2:
         if st.button("🔄 Enter a new Church Code"):
