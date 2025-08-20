@@ -284,26 +284,13 @@ elif st.session_state.stage == "choice":
             st.rerun()
 
 elif st.session_state.stage == "survey":
-    # =========================
-    # Per-code cooldown tracking
-    # =========================
-    if "last_submit_times" not in st.session_state:
-        st.session_state.last_submit_times = {}  # {code: datetime of last submission}
-
+    # ------------------------------
+    # Initialize cooldown tracking
+    # ------------------------------
     COOLDOWN = 120  # seconds
-    now = datetime.now()
+    if "last_submit_times" not in st.session_state:
+        st.session_state.last_submit_times = {}
 
-    # Get last submit time for this code (if any)
-    last_time = st.session_state.last_submit_times.get(st.session_state.church_code)
-    if last_time:
-        elapsed = (now - last_time).total_seconds()
-        remaining = max(0, COOLDOWN - int(elapsed))
-    else:
-        remaining = 0
-
-    # =========================
-    # Survey form
-    # =========================
     with st.form("survey_form", clear_on_submit=False):
         scores = []
         for q in questions:
@@ -315,28 +302,37 @@ elif st.session_state.stage == "survey":
             scores.append(score)
             st.markdown("---")
 
-        # Show button with cooldown
-        if remaining > 0:
-            minutes = remaining // 60
-            seconds = remaining % 60
-            submit_label = f"⏳ Wait {minutes}m {seconds}s before submitting again"
-            submitted = st.form_submit_button(submit_label, disabled=True)
-        else:
-            submitted = st.form_submit_button("✅ Submit Response")
+        submitted = st.form_submit_button("✅ Submit Response")
 
         if submitted:
-            try:
-                # Append to Google Sheets
-                new_row = [now.strftime("%Y-%m-%d %H:%M:%S"), st.session_state.church_code] + scores
-                sheet.append_row(new_row)
-                st.session_state.latest_scores = scores
-                st.session_state.stage = "results"
-                # Update last submission time for this code
-                st.session_state.last_submit_times[st.session_state.church_code] = now
-                st.success("✅ Your response has been submitted!")
-                st.rerun()
-            except Exception as e:
-                st.error(f"Could not submit to Google Sheets: {e}")
+            now = datetime.now()
+            last_time = st.session_state.last_submit_times.get(st.session_state.church_code)
+            remaining = 0
+            if last_time:
+                elapsed = (now - last_time).total_seconds()
+                remaining = max(0, COOLDOWN - int(elapsed))
+
+            if remaining > 0:
+                minutes = remaining // 60
+                seconds = remaining % 60
+                st.markdown(
+                    f"<p style='color:red; font-weight:bold;'>⏳ Please wait {minutes}m {seconds}s before submitting again for this code.</p>",
+                    unsafe_allow_html=True
+                )
+            else:
+                try:
+                    # Append to Google Sheets
+                    new_row = [now.strftime("%Y-%m-%d %H:%M:%S"), st.session_state.church_code] + scores
+                    sheet.append_row(new_row)
+
+                    st.session_state.latest_scores = scores
+                    st.session_state.stage = "results"
+                    st.session_state.last_submit_times[st.session_state.church_code] = now
+
+                    st.success("✅ Your response has been submitted!")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Could not submit to Google Sheets: {e}")
 
 elif st.session_state.stage == "results":
     try:
@@ -375,6 +371,7 @@ elif st.session_state.stage == "results":
             st.session_state.church_code = ""
             st.session_state.latest_scores = None
             st.rerun()
+
 
 
 
