@@ -243,56 +243,174 @@ if uploaded_file:
 st.divider()
 
 # =========================
-# LIVE SURVEY PATH (Church Code → Proceed → Submit)
+# EXCEL / CSV UPLOAD (Code + Control_ID filter)
 # =========================
+uploaded_ids = st.file_uploader(
+    "📂 Upload a file containing **Code** and **Control_ID** to filter results",
+    type=["xlsx", "xls", "csv"]
+)
+
+if uploaded_ids:
+    try:
+        # Read file depending on extension
+        if uploaded_ids.name.endswith(".csv"):
+            df_ids = pd.read_csv(uploaded_ids, dtype=str)
+        else:
+            df_ids = pd.read_excel(uploaded_ids, dtype=str)
+
+        required_cols = ["Code", "Control_ID"]
+        df_ids.rename(columns=lambda x: x.strip(), inplace=True)
+
+        # ✅ Validate required columns
+        if not all(col in df_ids.columns for col in required_cols):
+            st.error(f"⚠️ Invalid file format. The file must contain columns: {required_cols}")
+        else:
+            # Strip whitespace from values
+            df_ids = df_ids[required_cols].applymap(lambda x: x.strip() if isinstance(x, str) else x)
+
+            # ✅ Load Google Sheet responses
+            try:
+                data = sheet.get_all_records()
+                df = pd.DataFrame(data)
+                df.rename(columns=lambda x: x.strip(), inplace=True)
+
+                if df.empty:
+                    st.warning("⚠️ No responses available in Google Sheet.")
+                else:
+                    # Convert to str and strip for safety
+                    df = df.astype(str).applymap(lambda x: x.strip())
+
+                    # Filter rows where (Code, Control_ID) is in uploaded file
+                    merged = df.merge(df_ids, on=["Code", "Control_ID"], how="inner")
+
+                    if merged.empty:
+                        st.warning("⚠️ No matching responses found for uploaded IDs.")
+                    else:
+                        avg_scores = merged[[f"Q{i}" for i in range(1, 8)]].astype(float).mean().tolist()
+                        average = float(np.mean(avg_scores))
+
+                        classification, interpretation = classify(average)
+
+                        st.header("📊 Filtered Results (by uploaded IDs)")
+                        st.write(f"Number of respondents (matched): {len(merged)}")
+                        st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
+                        st.write(f"**Health Status:** _{classification}_")
+                        st.write(f"**Interpretation:** {interpretation}")
+
+                        st.subheader("🕸️ Radar Chart")
+                        draw_custom_radar(avg_scores, main_virtues)
+
+            except Exception as e:
+                st.error(f"❌ Could not fetch responses from Google Sheet: {e}")
+
+    except Exception as e:
+        st.error(f"❌ Could not process uploaded file: {e}")
+
+st.divider()
+
+# =========================
+# LIVE SURVEY PATH (Church Code → Optional Control ID → Survey → Results)
+# =========================
+
 st.subheader("📋 Questionnaire")
 
+# -------------------------
 # Initialize session state
+# -------------------------
 if "stage" not in st.session_state:
-    st.session_state.stage = "await_code"   # await_code -> choice -> survey -> submitted -> results
+    st.session_state.stage = "await_code"
 if "church_code" not in st.session_state:
     st.session_state.church_code = ""
-if "latest_scores" not in st.session_state:
-    st.session_state.latest_scores = None
+if "control_id" not in st.session_state:
+    st.session_state.control_id = ""
+
+def reset_session():
+    """Reset session state to initial state."""
+    st.session_state.stage = "await_code"
+    st.session_state.church_code = ""
+    st.session_state.control_id = ""
 
 # -------------------------
-# Page logic based on stage
+# Stage: Await Church Code
 # -------------------------
-
 if st.session_state.stage == "await_code":
     code = st.text_input(
         "Enter your Church Code (existing or new; responses and results will be linked to this code).",
         value=st.session_state.church_code
     )
-    if st.button("➡️ Continue"):
-        if code.strip() == "":
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        continue_btn = st.button("➡️ Continue to Survey")
+    with col2:
+        view_results_btn = st.button("📊 View Results Only")
+
+    if continue_btn:
+        if not code.strip():
             st.warning("⚠️ Please enter a Church Code before continuing.")
         else:
             st.session_state.church_code = code.strip()
-            st.session_state.stage = "choice"
+            st.session_state.stage = "control_input"   # normal survey path
             st.rerun()
 
-elif st.session_state.stage == "choice":
-    st.info(f"Church Code entered: **{st.session_state.church_code}**")
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("📊 View Results Only"):
-            st.session_state.stage = "results"
-            st.rerun()
-    with col2:
-        if st.button("📝 Proceed to Survey"):
-            st.session_state.stage = "survey"
+    if view_results_btn:
+        if not code.strip():
+            st.warning("⚠️ Please enter a Church Code before viewing results.")
+        else:
+            st.session_state.church_code = code.strip()
+            st.session_state.stage = "results"   # jump directly to results stage
             st.rerun()
 
+# -------------------------
+# Stage: Optional Control ID
+# -------------------------
+elif st.session_state.stage == "control_input":
+    st.info("Optional: Enter a Control ID provided by your church (leave blank for casual survey).")
+
+    with st.form("control_form"):
+        control_id_input = st.text_input("Control ID", value=st.session_state.control_id)
+        submit_control = st.form_submit_button("➡️ Continue to Survey")
+        cancel_control = st.form_submit_button("❌ Cancel")
+
+        if submit_control:
+            church_code = st.session_state.church_code
+            control_id_input = control_id_input.strip()
+
+            if not control_id_input:
+                # No Control ID → go to survey
+                st.session_state.control_id = ""
+                st.session_state.stage = "survey"
+                st.rerun()
+
+            try:
+                data = sheet.get_all_records()
+                df = pd.DataFrame(data)
+                df["Control_ID"] = df["Control_ID"].astype(str).str.strip()
+                df["Code"] = df["Code"].astype(str).str.strip()
+
+                duplicate = df[(df["Code"] == church_code) & (df["Control_ID"] == control_id_input)]
+            except Exception as e:
+                st.error(f"Could not fetch existing responses: {e}")
+                st.stop()
+
+            if not duplicate.empty:
+                st.warning(f"⚠️ Control ID '{control_id_input}' has already been used for Church Code '{church_code}'. You cannot proceed.")
+            else:
+                st.session_state.control_id = control_id_input
+                st.session_state.stage = "survey"
+                st.rerun()
+
+        if cancel_control:
+            reset_session()
+            st.rerun()
+
+# -------------------------
+# Stage: Survey Form
+# -------------------------
 elif st.session_state.stage == "survey":
-    # ------------------------------
-    # Initialize cooldown tracking
-    # ------------------------------
-    COOLDOWN = 120  # seconds
-    if "last_submit_times" not in st.session_state:
-        st.session_state.last_submit_times = {}
+    church_code = st.session_state.church_code
+    control_id = st.session_state.control_id
 
-    with st.form("survey_form", clear_on_submit=False):
+    with st.form("survey_form"):
         scores = []
         for q in questions:
             st.subheader(q["label"])
@@ -303,43 +421,41 @@ elif st.session_state.stage == "survey":
             scores.append(score)
             st.markdown("---")
 
-        submitted = st.form_submit_button("✅ Submit Response")
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            submit_survey = st.form_submit_button("✅ Submit Response")
+        with col2:
+            discard_survey = st.form_submit_button("❌ Discard and Go Back")
 
-        if submitted:
+        if discard_survey:
+            reset_session()
+            st.rerun()
+
+        if submit_survey:
             now = datetime.now()
-            last_time = st.session_state.last_submit_times.get(st.session_state.church_code)
-            remaining = 0
-            if last_time:
-                elapsed = (now - last_time).total_seconds()
-                remaining = max(0, COOLDOWN - int(elapsed))
+            new_row = [now.strftime("%Y-%m-%d %H:%M:%S"), church_code, control_id] + scores
+            try:
+                sheet.append_row(new_row)
+                st.session_state.stage = "results"
+                st.success("✅ Your response has been submitted!")
+                st.rerun()
+            except Exception as e:
+                st.error(f"Could not submit response: {e}")
 
-            if remaining > 0:
-                minutes = remaining // 60
-                seconds = remaining % 60
-                st.markdown(
-                    f"<p style='color:red; font-weight:bold;'>⏳ Please wait {minutes}m {seconds}s before submitting again for this code.</p>",
-                    unsafe_allow_html=True
-                )
-            else:
-                try:
-                    # Append to Google Sheets
-                    new_row = [now.strftime("%Y-%m-%d %H:%M:%S"), st.session_state.church_code] + scores
-                    sheet.append_row(new_row)
-
-                    st.session_state.latest_scores = scores
-                    st.session_state.stage = "results"
-                    st.session_state.last_submit_times[st.session_state.church_code] = now
-
-                    st.success("✅ Your response has been submitted!")
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Could not submit to Google Sheets: {e}")
-
+# -------------------------
+# Stage: Results
+# -------------------------
 elif st.session_state.stage == "results":
     try:
         data = sheet.get_all_records()
         df = pd.DataFrame(data)
-        df_code = df[df["Code"] == st.session_state.church_code]
+
+        # Normalize values before filtering
+        df["Code"] = df["Code"].astype(str).str.strip()
+        df["Control_ID"] = df["Control_ID"].astype(str).str.strip()
+
+        church_code = st.session_state.church_code
+        df_code = df[df["Code"] == church_code]
 
         if not df_code.empty:
             avg_scores = df_code[[f"Q{i}" for i in range(1, 8)]].mean().tolist()
@@ -347,7 +463,7 @@ elif st.session_state.stage == "results":
             classification, interpretation = classify(average)
 
             st.header("📊 Aggregated Results")
-            st.markdown(f"**Number of Respondents (Code {st.session_state.church_code}):** {len(df_code)}")
+            st.markdown(f"**Number of Respondents (Code {church_code}):** {len(df_code)}")
             st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
             st.write(f"**Health Status:** _{classification}_")
             st.write(f"**Interpretation:** {interpretation}")
@@ -360,17 +476,10 @@ elif st.session_state.stage == "results":
     except Exception as e:
         st.error(f"Could not fetch results: {e}")
 
-    st.info(f"Church Code used: **{st.session_state.church_code}**")
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("➕ Submit another response"):
-            st.session_state.stage = "survey"
-            st.rerun()
-    with col2:
-        if st.button("🔄 Enter a new Church Code"):
-            st.session_state.stage = "await_code"
-            st.session_state.church_code = ""
-            st.session_state.latest_scores = None
-            st.rerun()
+    st.info(f"### 📌 Church Code used: **{st.session_state.church_code}**")
+    if st.button("🔄 Go Back / Enter a new Church Code"):
+        reset_session()
+        st.rerun()
+
 
 
