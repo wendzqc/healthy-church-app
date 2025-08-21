@@ -210,103 +210,6 @@ questions = [
 
 main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in questions]
 
-# =========================
-# EXCEL UPLOAD PATH (optional)
-# =========================
-uploaded_file = st.file_uploader(
-    "If you already have survey data, upload an Excel file containing only the columns Q1–Q7 (one row per respondent)",
-    type=["xlsx", "xls"]
-)
-
-if uploaded_file:
-    df = pd.read_excel(uploaded_file)
-    expected_cols = [f"Q{i}" for i in range(1, 8)]
-    
-    # Check if uploaded Excel has exactly the expected columns
-    if list(df.columns) != expected_cols:
-        st.error(f"⚠️ Invalid Excel format. The file must contain **only these columns** in order: {expected_cols}")
-    else:
-        avg_scores = df[expected_cols].mean().tolist()
-        average = float(np.mean(avg_scores))
-        
-        classification, interpretation = classify(average)
-        
-        st.header("📊 Results (from uploaded file)")
-        st.write(f"Number of respondents: {len(df)}")
-        st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
-        st.write(f"**Health Status:** _{classification}_")
-        st.write(f"**Interpretation:** {interpretation}")
-        
-        st.subheader("🕸️ Radar Chart")
-        draw_custom_radar(avg_scores, main_virtues)
-
-st.divider()
-
-# =========================
-# EXCEL / CSV UPLOAD (Code + Control_ID filter)
-# =========================
-uploaded_ids = st.file_uploader(
-    "📂 Upload a file containing **Code** and **Control_ID** to filter results",
-    type=["xlsx", "xls", "csv"]
-)
-
-if uploaded_ids:
-    try:
-        # Read file depending on extension
-        if uploaded_ids.name.endswith(".csv"):
-            df_ids = pd.read_csv(uploaded_ids, dtype=str)
-        else:
-            df_ids = pd.read_excel(uploaded_ids, dtype=str)
-
-        required_cols = ["Code", "Control_ID"]
-        df_ids.rename(columns=lambda x: x.strip(), inplace=True)
-
-        # ✅ Validate required columns
-        if not all(col in df_ids.columns for col in required_cols):
-            st.error(f"⚠️ Invalid file format. The file must contain columns: {required_cols}")
-        else:
-            # Strip whitespace from values
-            df_ids = df_ids[required_cols].applymap(lambda x: x.strip() if isinstance(x, str) else x)
-
-            # ✅ Load Google Sheet responses
-            try:
-                data = sheet.get_all_records()
-                df = pd.DataFrame(data)
-                df.rename(columns=lambda x: x.strip(), inplace=True)
-
-                if df.empty:
-                    st.warning("⚠️ No responses available in Google Sheet.")
-                else:
-                    # Convert to str and strip for safety
-                    df = df.astype(str).applymap(lambda x: x.strip())
-
-                    # Filter rows where (Code, Control_ID) is in uploaded file
-                    merged = df.merge(df_ids, on=["Code", "Control_ID"], how="inner")
-
-                    if merged.empty:
-                        st.warning("⚠️ No matching responses found for uploaded IDs.")
-                    else:
-                        avg_scores = merged[[f"Q{i}" for i in range(1, 8)]].astype(float).mean().tolist()
-                        average = float(np.mean(avg_scores))
-
-                        classification, interpretation = classify(average)
-
-                        st.header("📊 Filtered Results (by uploaded IDs)")
-                        st.write(f"Number of respondents (matched): {len(merged)}")
-                        st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
-                        st.write(f"**Health Status:** _{classification}_")
-                        st.write(f"**Interpretation:** {interpretation}")
-
-                        st.subheader("🕸️ Radar Chart")
-                        draw_custom_radar(avg_scores, main_virtues)
-
-            except Exception as e:
-                st.error(f"❌ Could not fetch responses from Google Sheet: {e}")
-
-    except Exception as e:
-        st.error(f"❌ Could not process uploaded file: {e}")
-
-st.divider()
 
 # =========================
 # LIVE SURVEY PATH (Church Code → Optional Control ID → Survey → Results)
@@ -432,8 +335,10 @@ elif st.session_state.stage == "survey":
             st.rerun()
 
         if submit_survey:
-            now = datetime.now()
-            new_row = [now.strftime("%Y-%m-%d %H:%M:%S"), church_code, control_id] + scores
+            # Philippine time timestamp
+            ph_time = datetime.now(ZoneInfo("Asia/Manila")).strftime("%Y-%m-%d %H:%M:%S")
+            
+            new_row = [ph_time, church_code, control_id] + scores
             try:
                 sheet.append_row(new_row)
                 st.session_state.stage = "results"
@@ -480,6 +385,132 @@ elif st.session_state.stage == "results":
     if st.button("🔄 Go Back / Enter a new Church Code"):
         reset_session()
         st.rerun()
+
+st.divider()
+
+# =========================
+# OTHER OPTIONS (Accordion)
+# =========================
+with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"):
+    
+    # ------------------------
+    # 1. Upload Respondent List (Code & Control_ID)
+    # ------------------------
+    st.subheader("1️⃣ Filter Survey Results by Church Code and Control ID")
+    uploaded_ids = st.file_uploader(
+        "📂 Upload a file containing **Code** and **Control_ID** to filter results (e.g., official church survey)",
+        type=["xlsx", "xls", "csv"],
+        key="id_file"
+    )
+
+    st.caption("✅ Example format of the file:")
+    sample_ids = pd.DataFrame({
+        "Code": ["CH001", "CH001"],
+        "Control_ID": ["A123", "A124"]
+    })
+    st.dataframe(sample_ids, hide_index=True)
+
+    if uploaded_ids:
+        if uploaded_ids.name.endswith(".csv"):
+            df_upload = pd.read_csv(uploaded_ids)
+        else:
+            df_upload = pd.read_excel(uploaded_ids)
+
+        df_upload.columns = df_upload.columns.str.strip().str.lower()
+        if "church_code" in df_upload.columns and "code" not in df_upload.columns:
+            df_upload.rename(columns={"church_code": "code"}, inplace=True)
+
+        required_cols = {"code", "control_id"}
+        if not required_cols.issubset(set(df_upload.columns)):
+            st.error("⚠️ Invalid file. Must contain columns: Code (or Church_Code) and Control_ID.")
+        else:
+            st.success(f"✅ File accepted. {len(df_upload)} control IDs loaded.")
+
+            # Fetch Google Sheet data
+            data = sheet.get_all_records()
+            df_sheet = pd.DataFrame(data)
+            df_sheet.columns = df_sheet.columns.str.strip().str.lower()
+
+            merged = df_sheet.merge(
+                df_upload,
+                on=["code", "control_id"],
+                how="inner"
+            )
+
+            if merged.empty:
+                st.warning("⚠️ No matching respondents found in Google Sheet.")
+            else:
+                q_cols = [f"q{i}" for i in range(1, 8)]
+                avg_scores = merged[q_cols].mean().tolist()
+                average = float(np.mean(avg_scores))
+                classification, interpretation = classify(average)
+
+                #ph_time = datetime.now(ZoneInfo("Asia/Manila")).strftime("%Y-%m-%d %H:%M:%S")
+
+                st.header("📊 Results (Filtered by Uploaded List)")
+                st.info(f"Church Code(s) used: **{', '.join(merged['code'].unique())}**")
+                st.write(f"Number of respondents: {len(merged)}")
+                st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
+                st.write(f"**Health Status:** _{classification}_")
+                st.write(f"**Interpretation:** {interpretation}")
+                #st.write(f"📅 Timestamp: {ph_time}")
+
+                st.subheader("🕸️ Radar Chart")
+                draw_custom_radar(avg_scores, main_virtues)
+
+    st.divider()
+
+    # ------------------------
+    # 2. Upload Survey Results (Q1–Q7)
+    # ------------------------
+    st.subheader("2️⃣ View Direct Survey Results (Upload File)")
+    uploaded_file = st.file_uploader(
+        "📂 Upload a file (.xls, .xlsx, .csv) containing ONLY the columns Q1–Q7 (one row per respondent)",
+        type=["xlsx", "xls", "csv"],
+        key="survey_file"
+    )
+
+    st.caption("✅ Example format of the file (one row = one respondent):")
+    sample_df = pd.DataFrame({
+        "Q1": [4, 5],
+        "Q2": [3, 4],
+        "Q3": [5, 5],
+        "Q4": [2, 3],
+        "Q5": [4, 4],
+        "Q6": [3, 2],
+        "Q7": [5, 4],
+    })
+    st.dataframe(sample_df, hide_index=True)
+
+    if uploaded_file:
+        if uploaded_file.name.endswith(".csv"):
+            df = pd.read_csv(uploaded_file)
+        else:
+            df = pd.read_excel(uploaded_file)
+
+        df.rename(columns=lambda x: x.strip().lower(), inplace=True)
+        expected_cols = [f"q{i}" for i in range(1, 8)]
+
+        if list(df.columns) != expected_cols:
+            st.error(
+                f"⚠️ Invalid file format. "
+                f"The file must contain ONLY these columns in order: {', '.join([c.upper() for c in expected_cols])}"
+            )
+        else:
+            df.columns = [c.upper() for c in df.columns]
+            avg_scores = df[df.columns].mean().tolist()
+            average = float(np.mean(avg_scores))
+            classification, interpretation = classify(average)
+
+            st.header("📊 Results (from uploaded file)")
+            st.write(f"Number of respondents: {len(df)}")
+            st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
+            st.write(f"**Health Status:** _{classification}_")
+            st.write(f"**Interpretation:** {interpretation}")
+
+            st.subheader("🕸️ Radar Chart")
+            draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
