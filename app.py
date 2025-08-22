@@ -131,7 +131,7 @@ def classify(average):
 # =========================
 st.set_page_config(page_title="H.E.A.L.T.H.Y. Church Checklist", layout="centered")
 st.title("🧭 H.E.A.L.T.H.Y. Church Checklist")
-st.markdown("<div style='font-size:13px; color:gray;'>by Jason Richard Tan</div>", unsafe_allow_html=True)
+st.markdown("<div style='font-size:13px; color:gray;'>by Jason Richard Tan and Wendell Q. Campano</div>", unsafe_allow_html=True)
 st.divider()
 
 # =========================
@@ -542,6 +542,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
