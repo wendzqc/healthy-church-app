@@ -195,29 +195,9 @@ questions = [
 
 main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in questions]
 
-# =========================
-# SESSION STATE INITIALIZATION
-# =========================
-if "stage" not in st.session_state:
-    st.session_state.stage = "await_code"
-if "church_code" not in st.session_state:
-    st.session_state.church_code = ""
-if "control_id" not in st.session_state:
-    st.session_state.control_id = ""
-
-def reset_session():
-    """Reset session state to initial state."""
-    st.session_state.stage = "await_code"
-    st.session_state.church_code = ""
-    st.session_state.control_id = ""
-
-# =========================
-# STAGE: Await Church Code
-# =========================
-if st.session_state.stage == "await_code":
     # Detailed instructions above the input
-    with st.expander("📖 How to Use the App"):
-        st.markdown("""
+with st.expander("📖 How to Use the App"):
+    st.markdown("""
 **For Casual Church Surveys:**
 
 1. **Assign a common Church Code** for all participants (e.g., ABC2025Q1).  
@@ -241,6 +221,26 @@ if st.session_state.stage == "await_code":
 “**Other Options**: If your church has already collected responses, you can view the aggregated results by going to ‘⚙️ Other Options for Viewing/Filtering Results (Optional)’ and uploading a file under the second option, ‘2️⃣ View Direct Survey Results (Upload File)’. The file should contain the Q1–Q7 responses for each participant. The aggregated results will reflect only the respondents included in the uploaded file.”
        """)
         
+# =========================
+# SESSION STATE INITIALIZATION
+# =========================
+if "stage" not in st.session_state:
+    st.session_state.stage = "await_code"
+if "church_code" not in st.session_state:
+    st.session_state.church_code = ""
+if "control_id" not in st.session_state:
+    st.session_state.control_id = ""
+
+def reset_session():
+    """Reset session state to initial state."""
+    st.session_state.stage = "await_code"
+    st.session_state.church_code = ""
+    st.session_state.control_id = ""
+
+# =========================
+# STAGE: Await Church Code
+# =========================
+if st.session_state.stage == "await_code":
     code = st.text_input(
         "Enter your Church Code (existing or new; responses and results will be linked to this code).",
         value=st.session_state.church_code
@@ -529,6 +529,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
