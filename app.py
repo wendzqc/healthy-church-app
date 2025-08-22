@@ -446,9 +446,13 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
                 classification, interpretation = classify(average)
 
                 #ph_time = datetime.now(ZoneInfo("Asia/Manila")).strftime("%Y-%m-%d %H:%M:%S")
-
+                code_counts = merged['code'].value_counts()
+                formatted_codes = ", ".join([f"{code} ({count})" for code, count in code_counts.items()])
+                
                 st.header("📊 Results (Filtered by Uploaded List)")
-                st.info(f"Church Code(s) used: **{', '.join(merged['code'].unique())}**")
+                st.info(f"Church Code(s) used: **{formatted_codes}**")
+                
+                #st.info(f"Church Code(s) used: **{', '.join(merged['code'].unique())}**")
                 st.write(f"Number of respondents: {len(merged)}")
                 st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
                 st.write(f"**Health Status:** _{classification}_")
@@ -510,6 +514,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
