@@ -241,13 +241,14 @@ if st.session_state.stage == "await_code":
         "Enter your Church Code (existing or new; responses and results will be linked to this code).",
         value=st.session_state.church_code
     )
+    st.caption("⚠️ Note: Codes are case-sensitive (e.g., ABC is not the same as Abc).")
     col1, col2 = st.columns([1, 1])
     with col1:
-        continue_btn = st.button("➡️ Continue to Survey")
+        survey_btn = st.button("➡️ Take the Survey")
     with col2:
         view_results_btn = st.button("📊 View Results Only")
 
-    if continue_btn:
+    if survey_btn:
         if not code.strip():
             st.warning("⚠️ Please enter a Church Code before continuing.")
         else:
@@ -267,11 +268,12 @@ if st.session_state.stage == "await_code":
 # Stage: Optional Control ID
 # -------------------------
 elif st.session_state.stage == "control_input":
-    st.info("Optional: Enter a Control ID provided by your church (leave blank for casual survey).")
-
+    st.info("Optional: Enter a Control ID provided by your church (leave blank for casual or personal survey).")
+ 
     with st.form("control_form"):
         control_id_input = st.text_input("Control ID", value=st.session_state.control_id)
-        submit_control = st.form_submit_button("➡️ Continue to Survey")
+        st.caption("⚠️ Note: Control IDs are case-sensitive (e.g., A123 is not the same as a123).")
+        submit_control = st.form_submit_button("➡️ Submit and Continue")
         cancel_control = st.form_submit_button("❌ Cancel")
 
         if submit_control:
@@ -451,7 +453,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
                 
                 st.header("📊 Results (Filtered by Uploaded List)")
                 st.info(f"Church Code(s) used: **{formatted_codes}**")
-                
+
                 #st.info(f"Church Code(s) used: **{', '.join(merged['code'].unique())}**")
                 st.write(f"Number of respondents: {len(merged)}")
                 st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
