@@ -1,5 +1,6 @@
-
 # -*- coding: utf-8 -*-
+# Copyright (c) 2025 Wendell Q. Campano
+# All rights reserved; code may not be copied or used without written permission.
 """
 Created on Wed Jul 30 16:56:21 2025
 
@@ -7,7 +8,7 @@ Created on Wed Jul 30 16:56:21 2025
 """
 # -*- coding: utf-8 -*-
 #"""
-#H.E.A.L.T.H.Y. Church Checklist
+#H.E.A.L.T.H.Y. Church Checklist by Jason Richard Tan and Wendell Q. Campano
 #- Excel upload path (Q1..Q7), OR
 #- Live survey path gated by Church Code (writes to Google Sheets)
 #"""
@@ -516,6 +517,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
