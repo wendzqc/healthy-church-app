@@ -24,6 +24,9 @@ import gspread
 #from google.oauth2.service_account import Credentials
 from datetime import datetime
 from zoneinfo import ZoneInfo
+import qrcode
+from PIL import Image
+from io import BytesIO
 
 from google.oauth2.service_account import Credentials
 
@@ -195,31 +198,56 @@ questions = [
 
 main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in questions]
 
-    # Detailed instructions above the input
+# App URL
+APP_URL = "https://healthy-church-app.streamlit.app/"  # <-- replace with your deployed app URL
+
+# Generate QR code
+qr = qrcode.QRCode(
+    version=1,
+    error_correction=qrcode.constants.ERROR_CORRECT_H,
+    box_size=6,
+    border=2,
+)
+qr.add_data(APP_URL)
+qr.make(fit=True)
+img_qr = qr.make_image(fill_color="black", back_color="white")
+
+# Convert to Streamlit-friendly format
+buffer = BytesIO()
+img_qr.save(buffer, format="PNG")
+buffer.seek(0)
+qr_image = Image.open(buffer)
+
+# Detailed instructions above the input
 with st.expander("📖 How to Use the App"):
     st.markdown("""
-**For Casual Church Surveys:**
+**For Casual Church Surveys:**  
 
 1. **Assign a common Church Code** for all participants (e.g., ABC2025Q1).  
 2. **Instruct respondents to open the app and enter the assigned Church Code**, then press **➡️ Take the Survey**.  
    - The optional **Control ID** field will appear – leave it blank for a casual or personal survey.  
-3. **Let each respondent complete the survey** and submit their responses.  
-4. After submission, aggregated results will automatically appear for all respondents who have submitted.  
-   - Anyone with the Church Code can view the aggregated results by returning to the main page and clicking **📊 View Results Only**.
+3. **Respondents complete the survey** and submit their responses.  
+4. After submission, aggregated results will automatically appear for all respondents who submitted.  
+   - Anyone with the Church Code can view the aggregated results by returning to the main page and clicking **📊 View Results Only**.  
 
 **For Official Church Surveys:**  
 
 1. **Assign a common Church Code** for your church (e.g., ABC2025Q1).  
-2. **Provide each respondent with a unique Control ID** (e.g., A001, A002, …).  
+2. **Provide each respondent with a unique Control ID** (e.g., A001, A002…).  
 3. **Instruct respondents to open the app and enter the assigned Church Code**, then press **➡️ Take the Survey**.  
    - Enter the assigned **Control ID** in the optional field.  
-4. **Let each respondent complete the survey** and submit their responses.  
-5. After submission, aggregated results will automatically appear for all respondents who have submitted.  
-    - Anyone with the Church Code can view the aggregated results by returning to the main page and clicking **📊 View Results Only**.  
-    - To view aggregated results from **official survey respondents only**, go to **⚙️ Other Options for Viewing/Filtering Results (Optional)** and upload a file containing the assigned **Church Code(s) and Control IDs** under **1️⃣ Filter Survey Results by Church Code and Control ID**.
- 
-**Other Options**: If your church has already collected responses, you can view the aggregated results by going to ‘⚙️ Other Options for Viewing/Filtering Results (Optional)’ and uploading a file under the second option, ‘2️⃣ View Direct Survey Results (Upload File)’. The file should contain the Q1–Q7 responses for each participant. The aggregated results will reflect only the respondents included in the uploaded file.
-       """)
+4. **Respondents complete the survey** and submit their responses.  
+5. After submission, aggregated results will automatically appear for all respondents who submitted.  
+   - Anyone with the Church Code can view the aggregated results by returning to the main page and clicking **📊 View Results Only**.  
+   - To view aggregated results from **official survey respondents only**, go to **⚙️ Other Options for Viewing/Filtering Results (Optional)** and upload a file containing the assigned **Church Code(s) and Control IDs** under **1️⃣ Filter Survey Results by Church Code and Control ID**.  
+
+**Other Options:**  
+If your church has already collected responses, you can view the aggregated results by going to **⚙️ Other Options for Viewing/Filtering Results (Optional)** and uploading a file under **2️⃣ View Direct Survey Results (Upload File)**.  
+The file should contain Q1–Q7 responses for each participant. Aggregated results will reflect only the respondents included in the uploaded file.
+""")
+
+    st.markdown("**📱 Scan QR code to open the app directly:**")
+    st.image(qr_image, use_container_width=False)
         
 # =========================
 # SESSION STATE INITIALIZATION
@@ -529,6 +557,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
