@@ -3,7 +3,7 @@
 """
 Created on Wed Jul 30 16:56:21 2025
 
-@author: Desktop
+@author: wqcampano
 """
 # -*- coding: utf-8 -*-
 #"""
@@ -11,7 +11,6 @@ Created on Wed Jul 30 16:56:21 2025
 #- Excel upload path (Q1..Q7), OR
 #- Live survey path gated by Church Code (writes to Google Sheets)
 #"""
-
 
 import streamlit as st
 import numpy as np
@@ -374,7 +373,7 @@ elif st.session_state.stage == "results":
             st.write(f"**Health Status:** _{classification}_")
             st.write(f"**Interpretation:** {interpretation}")
 
-            st.subheader("🕸️ Radar Chart")
+            st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
         else:
             st.warning("⚠️ No responses yet for this Church Code.")
@@ -456,7 +455,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
                 st.write(f"**Interpretation:** {interpretation}")
                 #st.write(f"📅 Timestamp: {ph_time}")
 
-                st.subheader("🕸️ Radar Chart")
+                st.subheader("🕸️ Church Health Overview")
                 draw_custom_radar(avg_scores, main_virtues)
 
     st.divider()
@@ -509,8 +508,9 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
             st.write(f"**Health Status:** _{classification}_")
             st.write(f"**Interpretation:** {interpretation}")
 
-            st.subheader("🕸️ Radar Chart")
+            st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
