@@ -218,7 +218,7 @@ with st.expander("📖 How to Use the App"):
     - Anyone with the Church Code can view the aggregated results by returning to the main page and clicking **📊 View Results Only**.  
     - To view aggregated results from **official survey respondents only**, go to **⚙️ Other Options for Viewing/Filtering Results (Optional)** and upload a file containing the assigned **Church Code(s) and Control IDs** under **1️⃣ Filter Survey Results by Church Code and Control ID**.
  
-“**Other Options**: If your church has already collected responses, you can view the aggregated results by going to ‘⚙️ Other Options for Viewing/Filtering Results (Optional)’ and uploading a file under the second option, ‘2️⃣ View Direct Survey Results (Upload File)’. The file should contain the Q1–Q7 responses for each participant. The aggregated results will reflect only the respondents included in the uploaded file.”
+**Other Options**: If your church has already collected responses, you can view the aggregated results by going to ‘⚙️ Other Options for Viewing/Filtering Results (Optional)’ and uploading a file under the second option, ‘2️⃣ View Direct Survey Results (Upload File)’. The file should contain the Q1–Q7 responses for each participant. The aggregated results will reflect only the respondents included in the uploaded file.
        """)
         
 # =========================
@@ -529,6 +529,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
