@@ -131,7 +131,7 @@ def classify(average):
 # =========================
 st.set_page_config(page_title="H.E.A.L.T.H.Y. Church Checklist", layout="centered")
 st.title("🧭 H.E.A.L.T.H.Y. Church Checklist")
-st.markdown("<div style='font-size:13px; color:gray;'>by Jason Richard Tan and Wendell Q. Campano</div>", unsafe_allow_html=True)
+st.markdown("<div style='font-size:13px; color:gray;'>by Jason Richard Tan</div>", unsafe_allow_html=True)
 st.divider()
 
 # =========================
@@ -201,29 +201,38 @@ main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in ques
 # Detailed instructions above the input
 with st.expander("📖 How to Use the App"):
     st.markdown("""
-**For Casual Church Surveys:**  
+**For Casual Church Surveys:**
 
-1. **Assign a common Church Code** for all participants (e.g., ABC2025Q1).  
-2. **Instruct respondents to open the app and enter the assigned Church Code**, then press **➡️ Take the Survey**.  
-   - The optional **Control ID** field will appear – leave it blank for a casual or personal survey.  
-3. **Respondents complete the survey** and submit their responses.  
-4. After submission, aggregated results will automatically appear for all respondents who submitted.  
-   - Anyone with the Church Code can view the aggregated results by returning to the main page and clicking **📊 View Results Only**.  
+1. **Assign a common Church Code** to all participants (e.g., ABC2025Q1).  
+2. **Instruct participants to open the app, enter the Church Code**, and click **➡️ Take the Survey**.  
+   - The optional **Control ID** field will appear – leave it blank for casual or personal surveys.  
+3. **Have each participant complete the survey** and submit their responses.  
+4. **View results:** Aggregated results appear automatically after submission.  
+   - Anyone with the Church Code can view them by returning to the main page and clicking **📊 View Results Only**.
 
-**For Official Church Surveys:**  
+**For Official Church Surveys:**
 
 1. **Assign a common Church Code** for your church (e.g., ABC2025Q1).  
-2. **Provide each respondent with a unique Control ID** (e.g., A001, A002…).  
-3. **Instruct respondents to open the app and enter the assigned Church Code**, then press **➡️ Take the Survey**.  
+2. **Provide each participant with a unique Control ID** (e.g., A001, A002…).  
+3. **Instruct participants to open the app, enter the Church Code**, and click **➡️ Take the Survey**.  
    - Enter the assigned **Control ID** in the optional field.  
-4. **Respondents complete the survey** and submit their responses.  
-5. After submission, aggregated results will automatically appear for all respondents who submitted.  
-   - Anyone with the Church Code can view the aggregated results by returning to the main page and clicking **📊 View Results Only**.  
-   - To view aggregated results from **official survey respondents only**, go to **⚙️ Other Options for Viewing/Filtering Results (Optional)** and upload a file containing the assigned **Church Code(s) and Control IDs** under **1️⃣ Filter Survey Results by Church Code and Control ID**.  
+4. **Have each participant complete the survey** and submit their responses.  
+5. **View results:** Aggregated results appear automatically after submission.  
+   - Anyone with the Church Code can view them by returning to the main page and clicking **📊 View Results Only**.  
+   - To view **official survey results only**, go to **⚙️ Other Options for Viewing/Filtering Results (Optional)** and upload a file containing the assigned **Church Code(s) and Control IDs** under **2️⃣ Filter Survey Results by Church Code and Control ID**.  
+     - Only the uploaded respondents are included in the aggregated results.
 
-**Other Options:**  
-If your church has already collected responses, you can view the aggregated results by going to **⚙️ Other Options for Viewing/Filtering Results (Optional)** and uploading a file under **2️⃣ View Direct Survey Results (Upload File)**.  
-The file should contain Q1–Q7 responses for each participant. Aggregated results will reflect only the respondents included in the uploaded file.
+**Additional Options:**
+
+1. **Filter Survey Results by Church Code and Date**  
+   - View aggregated results for a specific Church Code within an inclusive date range (using the Timestamp).  
+
+2. **Filter Survey Results by Church Code and Control ID**  
+   - Upload a file containing Church Code(s) and Control IDs to view aggregated results for selected respondents only.  
+
+3. **View Direct Survey Results (Upload File)**  
+   - Upload a file with Q1–Q7 responses for each participant.  
+   - Aggregated results will reflect only the respondents included in the uploaded file.
 """)
 
     st.markdown("**📱 Scan QR code to open the app directly:**")
@@ -233,7 +242,7 @@ The file should contain Q1–Q7 responses for each participant. Aggregated resul
     # Display the static QR code image
     st.image(img, caption="H.E.A.L.T.H.Y Church App")
     #st.image("app_qr.png", caption="Scan to open the H.E.A.L.T.H.Y. Church Checklist App", use_container_width=True)
-        
+       
 # =========================
 # SESSION STATE INITIALIZATION
 # =========================
@@ -254,6 +263,7 @@ def reset_session():
 # STAGE: Await Church Code
 # =========================
 if st.session_state.stage == "await_code":
+       
     code = st.text_input(
         "Enter your Church Code (existing or new; responses and results will be linked to this code).",
         value=st.session_state.church_code
@@ -422,9 +432,77 @@ st.divider()
 with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"):
     
     # ------------------------
-    # 1. Upload Respondent List (Code & Control_ID)
+    # 1. Filter by Date (Now Option 1)
     # ------------------------
-    st.subheader("1️⃣ Filter Survey Results by Church Code and Control ID")
+    st.subheader("1️⃣ Filter Survey Results by Date (Optional)")
+    st.info("View aggregated results for a Church Code within a specific date range. Control IDs are not required.")
+    
+    # Input Church Code
+    date_filter_code = st.text_input(
+        "Enter Church Code to filter",
+        value=st.session_state.church_code,
+        key="date_filter_code"
+    )
+    
+    # Separate Start and End Date selection
+    start_date = st.date_input("Select start date", value=datetime(2025, 1, 1), key="start_date")
+    end_date = st.date_input("Select end date", value=datetime.today(), key="end_date")
+    
+    if st.button("📊 View Date-Filtered Results", key="date_filter_btn"):
+        if not date_filter_code.strip():
+            st.warning("⚠️ Please enter a Church Code before filtering.")
+        else:
+            try:
+                # Ensure valid range
+                if start_date > end_date:
+                    st.warning("⚠️ Please select a valid date range (start date must be before end date).")
+                else:
+                    data = sheet.get_all_records()
+                    df = pd.DataFrame(data)
+                    df["Code"] = df["Code"].astype(str).str.strip()
+                    df["Timestamp"] = pd.to_datetime(df["Timestamp"], errors="coerce")
+    
+                    # Filter by code
+                    df_code = df[df["Code"] == date_filter_code.strip()]
+    
+                    # Filter by date
+                    start_dt = pd.to_datetime(start_date)
+                    end_dt = pd.to_datetime(end_date) + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
+                    
+                    df_filtered = df_code[
+                        (df_code["Timestamp"] >= start_dt) &
+                        (df_code["Timestamp"] <= end_dt)
+                        ]
+    
+                    if df_filtered.empty:
+                        st.warning("⚠️ No responses found for this Church Code in the selected date range.")
+                    else:
+                        avg_scores = df_filtered[[f"Q{i}" for i in range(1, 8)]].mean().tolist()
+                        average = float(np.mean(avg_scores))
+                        classification, interpretation = classify(average)
+    
+                        st.header(f"📊 Aggregated Results for {date_filter_code.strip()}")
+    
+                        # Show selected date range
+                        st.markdown(f"**Date Range:** {start_date.strftime('%Y-%m-%d')} - {end_date.strftime('%Y-%m-%d')}")
+    
+                        st.markdown(f"**Number of respondents:** {len(df_filtered)}")
+                        st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
+                        st.write(f"**Health Status:** _{classification}_")
+                        st.write(f"**Interpretation:** {interpretation}")
+    
+                        st.subheader("🕸️ Church Health Overview")
+                        draw_custom_radar(avg_scores, main_virtues)
+    
+            except Exception:
+                st.warning("⚠️ Please select a valid range.")
+    
+    st.divider()
+
+    # ------------------------
+    # 2. Upload Respondent List (Code & Control_ID)
+    # ------------------------
+    st.subheader("2️⃣ Filter Survey Results by Church Code and Control ID")
     uploaded_ids = st.file_uploader(
         "📂 Upload a file containing **Code** and **Control_ID** to filter results (e.g., official church survey)",
         type=["xlsx", "xls", "csv"],
@@ -493,9 +571,9 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     st.divider()
 
     # ------------------------
-    # 2. Upload Survey Results (Q1–Q7)
+    # 3. Upload Survey Results (Q1–Q7)
     # ------------------------
-    st.subheader("2️⃣ View Direct Survey Results (Upload File)")
+    st.subheader("3️⃣ View Direct Survey Results (Upload File)")
     uploaded_file = st.file_uploader(
         "📂 Upload a file (.xls, .xlsx, .csv) containing ONLY the columns Q1–Q7 (one row per respondent)",
         type=["xlsx", "xls", "csv"],
@@ -542,6 +620,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
