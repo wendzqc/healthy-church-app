@@ -124,46 +124,30 @@ def classify(average):
                 "Comprehensive renewal needed; reflects fundamental spiritual health problems")
 
 # =========================
-# APP
+# APP SETUP
 # =========================
 st.set_page_config(page_title="H.E.A.L.T.H.Y. Church Checklist", layout="centered")
 st.title("🧭 H.E.A.L.T.H.Y. Church Checklist")
 st.markdown("<div style='font-size:13px; color:gray;'>by Jason Richard Tan</div>", unsafe_allow_html=True)
+st.divider()
 
-st.markdown(
-    """
-For each area of church health, you’ll see **three descriptions**:
-
-- One that reflects an **unhealthy pattern**  
-- One that shows a **growing** or **developing** state  
-- One that represents a **healthy, ideal** state
-
-Please reflect on your church honestly, then rate your church from **1 to 10**:
-
-- **1–3** → Closely resembles the unhealthy description  
-- **4–7** → Somewhere in between; growing in this area  
-- **8–10** → Strongly reflects the healthy description
-"""
-)
-
-# If you bundle the PNG, keep the filename the same or update here.
-st.image("health_continuum_dark_green.png", use_container_width=True)
-
-# The 7 questions
+# =========================
+# SURVEY QUESTIONS
+# =========================
 questions = [
     {
         "label": "HUMILITY (Matt 5, meek; 1 Cor 13, not boastful, not proud, not self-seeking)",
         "anchors": [
             "There is a spirit of competition, boasting, and arrogance, especially in board meetings, planning, and events. No one offers an apology after a heated argument.",
-            "There was a time when the leaders sought forgiveness as a community before God and with each other, but it was a long time ago. ",
+            "There was a time when the leaders sought forgiveness as a community before God and with each other, but it was a long time ago.",
             "People regard each other better than themselves (Phil. 2:3). There is genuine respect for each other’s place in the community."
         ]
     },
     {
-        "label": "ENDURANCE in the Faith. (Gal. 5, patience, faithfulness; Matt 5, faithful in poverty, endures persecution; 1 Cor 13, always perseveres)",
+        "label": "ENDURANCE in the Faith (Gal. 5, patience, faithfulness; Matt 5, faithful in poverty, endures persecution; 1 Cor 13, always perseveres)",
         "anchors": [
             "People are ready to leave the church if they have an option, or they are willing to stay in the church as long as no one changes the status quo.",
-            "People are willing to do ministry beyond Sunday worship for as long as it is convenient. ",
+            "People are willing to do ministry beyond Sunday worship for as long as it is convenient.",
             "The community genuinely exemplifies faithfulness, sacrifice, and endurance in the faith despite persecution, poverty, or difficulty."
         ]
     },
@@ -172,55 +156,48 @@ questions = [
         "anchors": [
             "People come to church only to fulfill a religious expectation or because they are used to it. When the service ends, the worship hall is empty within a few minutes.",
             "A few people linger to have fellowship after the service for extended fellowship or prayer.",
-            "People are genuinely kind, hospitable, gentle, and merciful. They share resources with each other and would go the extra mile to help someone in need. They even visit the sick and pray for those in need."
+            "People are genuinely kind, hospitable, gentle, and merciful. They share resources with each other and go the extra mile to help those in need."
         ]
     },
     {
         "label": "LOVE (1 Cor. 13, …but have not love, I am nothing. Gal. 5, love)",
         "anchors": [
             "There is hostility, selfish ambition, factions, and discord within the community. There is hatred between leaders and members.",
-            "Members are generally amicable to each other but lack the depth of friendship. If given a chance, they are willing to come together to build meaningful relationships.",
-            "You sense that members, in general, truly love each other. They often linger for fellowship and prayer and even share meals after the service. There is much laughter, joy, and peace in the community, and they are excited to see each other in church."
+            "Members are generally amicable to each other but lack the depth of friendship.",
+            "Members genuinely love each other, linger for fellowship and prayer, share meals, and experience joy and peace in the community."
         ]
     },
     {
         "label": "TRUSTWORTHINESS (Matt.5, pure in heart; 1 Cor.13, always trusts, always hopes)",
         "anchors": [
-            "There is a general mistrust and suspicion between the members and leaders. There is open hostility and contempt against leaders and members.",
-            "A few people sow discord, but a majority still affirm the pastor's leadership. The general mood of the congregation is to give the pastor the benefit of the doubt.",
-            "The congregation fully trusts the church's leadership. The leaders seek to emulate a life consistent with God’s Word, living, leading, serving, and loving biblically as Christ intended them to do."
+            "There is a general mistrust and suspicion between the members and leaders.",
+            "A few people sow discord, but a majority still affirm the pastor's leadership.",
+            "The congregation fully trusts the church's leadership, who emulate Christ-like living, leading, and serving."
         ]
     },
     {
         "label": "HARMONY (Gal. 5, peace; Matt. 5, peacemaker; 1 Cor. 13, it keeps no record of wrongs)",
         "anchors": [
-            "There is a spirit of discord, selfish ambition, jealousy, fighting, gossip, slander, and offensive language. People have left the church, but no one seems to care to reach out to them.",
-            "Offenses have been made in the past, and there are no efforts to address them. However, the community is more sensitive about not repeating the same mistake they did.",
-            "There is forgiveness, general peace, and harmony within the community. Although there are arguments and misunderstandings, they do not let these get in the way of their relationship. Leaders and members are quick to apologize and acknowledge their faults when necessary."
+            "There is discord, jealousy, fighting, gossip, and offensive language. People have left the church without reconciliation.",
+            "Past offenses are recognized, but efforts are minimal to prevent repetition.",
+            "There is forgiveness, general peace, and harmony within the community."
         ]
     },
     {
-        "label": "YEARNING for truth (1 Cor. 13, love does not delight in evil, but rejoices with the truth, …but have not love, I am nothing)",
+        "label": "YEARNING for truth (1 Cor. 13, love does not delight in evil, but rejoices with the truth)",
         "anchors": [
-            "People do not care what is preached or taught in church. The majority of attendees do not practice personal time in reading, praying, or studying God’s word.",
-            "People are into discipleship groups or care groups, but they are not willing to do anything new or beyond the four corners of the church.",
-            "People are eager to learn from the Scriptures and to grow in the faith. They read and study on their own. There is excitement around the study of God’s word, disciple-making, serving the community, and living our lives as believers in their community."
+            "People do not engage with Scripture or practice personal prayer and study.",
+            "Some participate in discipleship or care groups but show limited initiative.",
+            "People eagerly learn from Scriptures, grow in faith, and actively live and serve in their community."
         ]
     }
 ]
 
 main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in questions]
 
-
 # =========================
-# LIVE SURVEY PATH (Church Code → Optional Control ID → Survey → Results)
+# SESSION STATE INITIALIZATION
 # =========================
-
-st.subheader("📋 Questionnaire")
-
-# -------------------------
-# Initialize session state
-# -------------------------
 if "stage" not in st.session_state:
     st.session_state.stage = "await_code"
 if "church_code" not in st.session_state:
@@ -234,10 +211,36 @@ def reset_session():
     st.session_state.church_code = ""
     st.session_state.control_id = ""
 
-# -------------------------
-# Stage: Await Church Code
-# -------------------------
+# =========================
+# STAGE: Await Church Code
+# =========================
 if st.session_state.stage == "await_code":
+    # Detailed instructions above the input
+    with st.expander("📖 How to Use the App"):
+        st.markdown("""
+**For Casual Church Surveys:**
+
+1. **Assign a common Church Code** for all participants (e.g., ABC2025Q1).  
+2. **Instruct respondents to open the app and enter the assigned Church Code**, then press **➡️ Take the Survey**.  
+   - The optional **Control ID** field will appear – leave it blank for a casual or personal survey.  
+3. **Let each respondent complete the survey** and submit their responses.  
+4. After submission, aggregated results will automatically appear for all respondents who have submitted.  
+   - Anyone with the Church Code can view the aggregated results by returning to the main page and clicking **📊 View Results Only**.
+
+**For Official Church Surveys:**  
+
+1. **Assign a common Church Code** for your church (e.g., ABC2025Q1).  
+2. **Provide each respondent with a unique Control ID** (e.g., A001, A002, …).  
+3. **Instruct respondents to open the app and enter the assigned Church Code**, then press **➡️ Take the Survey**.  
+   - Enter the assigned **Control ID** in the optional field.  
+4. **Let each respondent complete the survey** and submit their responses.  
+5. After submission, aggregated results will automatically appear for all respondents who have submitted.  
+    - Anyone with the Church Code can view the aggregated results by returning to the main page and clicking **📊 View Results Only**.  
+    - To view aggregated results from **official survey respondents only**, go to **⚙️ Other Options for Viewing/Filtering Results (Optional)** and upload a file containing the assigned **Church Code(s) and Control IDs** under **1️⃣ Filter Survey Results by Church Code and Control ID**.
+ 
+“**Other Options**: If your church has already collected responses, you can view the aggregated results by going to ‘⚙️ Other Options for Viewing/Filtering Results (Optional)’ and uploading a file under the second option, ‘2️⃣ View Direct Survey Results (Upload File)’. The file should contain the Q1–Q7 responses for each participant. The aggregated results will reflect only the respondents included in the uploaded file.”
+       """)
+        
     code = st.text_input(
         "Enter your Church Code (existing or new; responses and results will be linked to this code).",
         value=st.session_state.church_code
@@ -254,7 +257,7 @@ if st.session_state.stage == "await_code":
             st.warning("⚠️ Please enter a Church Code before continuing.")
         else:
             st.session_state.church_code = code.strip()
-            st.session_state.stage = "control_input"   # normal survey path
+            st.session_state.stage = "control_input"
             st.rerun()
 
     if view_results_btn:
@@ -262,59 +265,74 @@ if st.session_state.stage == "await_code":
             st.warning("⚠️ Please enter a Church Code before viewing results.")
         else:
             st.session_state.church_code = code.strip()
-            st.session_state.stage = "results"   # jump directly to results stage
+            st.session_state.stage = "results"
             st.rerun()
 
-# -------------------------
-# Stage: Optional Control ID
-# -------------------------
+# =========================
+# STAGE: Optional Control ID
+# =========================
 elif st.session_state.stage == "control_input":
     st.info("Optional: Enter a Control ID provided by your church (leave blank for casual or personal survey).")
- 
+
     with st.form("control_form"):
         control_id_input = st.text_input("Control ID", value=st.session_state.control_id)
-        st.caption("⚠️ Note: Control IDs are case-sensitive (e.g., A123 is not the same as a123).")
+        st.caption("⚠️ Note: Control IDs are case-sensitive (e.g., A123 ≠ a123).")
         submit_control = st.form_submit_button("➡️ Submit and Continue")
         cancel_control = st.form_submit_button("❌ Cancel")
 
         if submit_control:
-            church_code = st.session_state.church_code
             control_id_input = control_id_input.strip()
-
             if not control_id_input:
-                # No Control ID → go to survey
                 st.session_state.control_id = ""
                 st.session_state.stage = "survey"
                 st.rerun()
-
-            try:
-                data = sheet.get_all_records()
-                df = pd.DataFrame(data)
-                df["Control_ID"] = df["Control_ID"].astype(str).str.strip()
-                df["Code"] = df["Code"].astype(str).str.strip()
-
-                duplicate = df[(df["Code"] == church_code) & (df["Control_ID"] == control_id_input)]
-            except Exception as e:
-                st.error(f"Could not fetch existing responses: {e}")
-                st.stop()
-
-            if not duplicate.empty:
-                st.warning(f"⚠️ Control ID '{control_id_input}' has already been used for Church Code '{church_code}'. You cannot proceed.")
             else:
-                st.session_state.control_id = control_id_input
-                st.session_state.stage = "survey"
-                st.rerun()
+                # Check for duplicate
+                try:
+                    data = sheet.get_all_records()
+                    df = pd.DataFrame(data)
+                    df["Control_ID"] = df["Control_ID"].astype(str).str.strip()
+                    df["Code"] = df["Code"].astype(str).str.strip()
+                    duplicate = df[(df["Code"] == st.session_state.church_code) & (df["Control_ID"] == control_id_input)]
+                except Exception as e:
+                    st.error(f"Could not fetch existing responses: {e}")
+                    st.stop()
+
+                if not duplicate.empty:
+                    st.warning(f"⚠️ Control ID '{control_id_input}' has already been used for Church Code '{st.session_state.church_code}'.")
+                else:
+                    st.session_state.control_id = control_id_input
+                    st.session_state.stage = "survey"
+                    st.rerun()
 
         if cancel_control:
             reset_session()
             st.rerun()
 
-# -------------------------
-# Stage: Survey Form
-# -------------------------
+# =========================
+# STAGE: Survey Form
+# =========================
 elif st.session_state.stage == "survey":
-    church_code = st.session_state.church_code
-    control_id = st.session_state.control_id
+    st.subheader("📋 Questionnaire")
+
+    # Survey instructions and visual
+    st.markdown(
+        """
+For each area of church health, you’ll see **three descriptions**:
+
+- One that reflects an **unhealthy pattern**  
+- One that shows a **growing** or **developing** state  
+- One that represents a **healthy, ideal** state
+
+Please reflect on your church honestly, then rate your church from **1 to 10**:
+
+- **1–3** → Closely resembles the unhealthy description  
+- **4–7** → Somewhere in between; growing in this area  
+- **8–10** → Strongly reflects the healthy description
+
+"""
+    )
+    st.image("health_continuum_dark_green.png", use_container_width=True)
 
     with st.form("survey_form"):
         scores = []
@@ -338,32 +356,26 @@ elif st.session_state.stage == "survey":
             st.rerun()
 
         if submit_survey:
-            # Philippine time timestamp
             ph_time = datetime.now(ZoneInfo("Asia/Manila")).strftime("%Y-%m-%d %H:%M:%S")
-            
-            new_row = [ph_time, church_code, control_id] + scores
+            new_row = [ph_time, st.session_state.church_code, st.session_state.control_id] + scores
             try:
                 sheet.append_row(new_row)
-                st.session_state.stage = "results"
                 st.success("✅ Your response has been submitted!")
+                st.session_state.stage = "results"
                 st.rerun()
             except Exception as e:
                 st.error(f"Could not submit response: {e}")
 
-# -------------------------
-# Stage: Results
-# -------------------------
+# =========================
+# STAGE: Results
+# =========================
 elif st.session_state.stage == "results":
     try:
         data = sheet.get_all_records()
         df = pd.DataFrame(data)
-
-        # Normalize values before filtering
         df["Code"] = df["Code"].astype(str).str.strip()
         df["Control_ID"] = df["Control_ID"].astype(str).str.strip()
-
-        church_code = st.session_state.church_code
-        df_code = df[df["Code"] == church_code]
+        df_code = df[df["Code"] == st.session_state.church_code]
 
         if not df_code.empty:
             avg_scores = df_code[[f"Q{i}" for i in range(1, 8)]].mean().tolist()
@@ -371,7 +383,7 @@ elif st.session_state.stage == "results":
             classification, interpretation = classify(average)
 
             st.header("📊 Aggregated Results")
-            st.markdown(f"**Number of Respondents (Code {church_code}):** {len(df_code)}")
+            st.markdown(f"**Number of Respondents (Code {st.session_state.church_code}):** {len(df_code)}")
             st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
             st.write(f"**Health Status:** _{classification}_")
             st.write(f"**Interpretation:** {interpretation}")
