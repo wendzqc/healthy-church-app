@@ -240,7 +240,7 @@ with st.expander("📖 How to Use the App"):
     img = img.resize((250, 250))  # width x height in pixels
 
     # Display the static QR code image
-    st.image(img, caption="H.E.A.L.T.H.Y Church App")
+    st.image(img, caption="H.E.A.L.T.H.Y. Church App")
     #st.image("app_qr.png", caption="Scan to open the H.E.A.L.T.H.Y. Church Checklist App", use_container_width=True)
        
 # =========================
@@ -620,6 +620,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
