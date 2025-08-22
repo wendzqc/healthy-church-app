@@ -434,7 +434,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     # ------------------------
     # 1. Filter by Date (Now Option 1)
     # ------------------------
-    st.subheader("1️⃣ Filter Survey Results by Date (Optional)")
+    st.subheader("1️⃣ Filter Survey Results by Date")
     st.info("View aggregated results for a Church Code within a specific date range. Control IDs are not required.")
     
     # Input Church Code
@@ -620,6 +620,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
