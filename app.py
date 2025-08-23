@@ -215,7 +215,8 @@ with st.expander("📖 How to Use the App"):
 1. **Assign a common Church Code** for your church (e.g., ABC2025Q1).  
 2. **Provide each participant with a unique Control ID** (e.g., A001, A002…).  
 3. **Instruct participants to open the app, enter the Church Code**, and click **➡️ Take the Survey**.  
-   - Enter the assigned **Control ID** in the optional field.  
+   - Enter the assigned **Control ID** in the optional field.
+   - Each Control ID can only be used **once**; duplicate entries will not be accepted by the system.
 4. **Have each participant complete the survey** and submit their responses.  
 5. **View results:** Aggregated results appear automatically after submission.  
    - Anyone with the Church Code can view them by returning to the main page and clicking **📊 View Results Only**.  
@@ -435,7 +436,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     # 1. Filter by Date (Now Option 1)
     # ------------------------
     st.subheader("1️⃣ Filter Survey Results by Date")
-    st.info("View aggregated results for a Church Code within a specific date range. Control IDs are not required.")
+    st.info("View aggregated results for a Church Code within a specific date range.")
     
     # Input Church Code
     date_filter_code = st.text_input(
@@ -445,8 +446,8 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     )
     
     # Separate Start and End Date selection
-    start_date = st.date_input("Select start date", value=datetime(2025, 1, 1), key="start_date")
-    end_date = st.date_input("Select end date", value=datetime.today(), key="end_date")
+    start_date = st.date_input("Select start date (yyyy/mm/dd)", value=datetime(2025, 1, 1), key="start_date")
+    end_date = st.date_input("Select end date (yyyy/mm/dd)", value=datetime.today(), key="end_date")
     
     if st.button("📊 View Date-Filtered Results", key="date_filter_btn"):
         if not date_filter_code.strip():
@@ -504,7 +505,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     # ------------------------
     st.subheader("2️⃣ Filter Survey Results by Church Code and Control ID")
     uploaded_ids = st.file_uploader(
-        "📂 Upload a file containing **Code** and **Control_ID** to filter results (e.g., official church survey)",
+        "📂 Upload a file containing **Code**(for Church Code) and **Control_ID** to filter results (e.g., official church survey)",
         type=["xlsx", "xls", "csv"],
         key="id_file"
     )
@@ -620,6 +621,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
