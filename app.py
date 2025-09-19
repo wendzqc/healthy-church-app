@@ -301,7 +301,7 @@ elif st.session_state.stage == "control_input":
     with st.form("control_form"):
         control_id_input = st.text_input("Control ID", value=st.session_state.control_id)
         st.caption("⚠️ Note: Control IDs are case-sensitive (e.g., A123 ≠ a123).")
-        submit_control = st.form_submit_button("➡️ Submit and Continue")
+        submit_control = st.form_submit_button("➡️ Proceed to Questionnaire")
         cancel_control = st.form_submit_button("❌ Cancel")
 
         if submit_control:
@@ -622,6 +622,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
