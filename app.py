@@ -226,7 +226,7 @@ with st.expander("📖 How to Use the App"):
 **Additional Options:**
 
 1. **Filter Survey Results by Church Code and Date**  
-   - View aggregated results for a specific Church Code within an inclusive date range (using the Timestamp).  
+   - Aggregated results for a Church Code will reflect only responses submitted within the selected date range.  
 
 2. **Filter Survey Results by Church Code and Control ID**  
    - Upload a file containing Church Code(s) and Control IDs to view aggregated results for selected respondents only.  
@@ -622,6 +622,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
