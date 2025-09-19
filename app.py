@@ -342,7 +342,7 @@ elif st.session_state.stage == "survey":
     # Survey instructions and visual
     st.markdown(
         """
-For each area of church health, you’ll see **three descriptions**:
+For each area of church health, you’ll see **three reference descriptions**:
 
 - One that reflects an **unhealthy pattern**  
 - One that shows a **growing** or **developing** state  
@@ -622,6 +622,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
