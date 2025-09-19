@@ -141,57 +141,57 @@ questions = [
     {
         "label": "HUMILITY (Matt 5, meek; 1 Cor 13, not boastful, not proud, not self-seeking)",
         "anchors": [
-            "There is a spirit of competition, boasting, and arrogance, especially in board meetings, planning, and events. No one offers an apology after a heated argument.",
-            "There was a time when the leaders sought forgiveness as a community before God and with each other, but it was a long time ago.",
-            "People regard each other better than themselves (Phil. 2:3). There is genuine respect for each other’s place in the community."
+            "A spirit of competition, boasting, or arrogance dominates, especially in board meetings. Members rarely apologize or seek reconciliation when conflicts arise.",
+            "Leaders and members sometimes seek forgiveness and reconciliation, though these behaviors are rarely noticed.",
+            "Members consistently value others above themselves, act with gentleness, respect, and courtesy, and seek reconciliation when conflicts arise."
         ]
     },
     {
         "label": "ENDURANCE in the Faith (Gal. 5, patience, faithfulness; Matt 5, faithful in poverty, endures persecution; 1 Cor 13, always perseveres)",
         "anchors": [
-            "People are ready to leave the church if they have an option, or they are willing to stay in the church as long as no one changes the status quo.",
-            "People are willing to do ministry beyond Sunday worship for as long as it is convenient.",
-            "The community genuinely exemplifies faithfulness, sacrifice, and endurance in the faith despite persecution, poverty, or difficulty."
+            "People leave or disengage when challenges arise. Ministry participation is minimal or conditional.",
+            "Members tend to participate only when convenient and rarely persevere through difficulties or changes.",
+            "The community demonstrates consistent faithfulness, perseverance, adaptability, and willingness to serve despite difficulty or personal sacrifice."
         ]
     },
     {
         "label": "AUTHENTICITY (1 Cor 13, kind, not envious, not boastful, not proud, not rude, not self-seeking; Gal. 5, joy gentleness, self-control; Matt 5, merciful)",
         "anchors": [
-            "People come to church only to fulfill a religious expectation or because they are used to it. When the service ends, the worship hall is empty within a few minutes.",
-            "A few people linger to have fellowship after the service for extended fellowship or prayer.",
-            "People are genuinely kind, hospitable, gentle, and merciful. They share resources with each other and go the extra mile to help those in need."
+            "Attendance is mostly habitual or for appearances; kindness, generosity, and public testimonies are minimal.",
+            "Members show support, encouragement, and eagerness to have fellowship with one another, though these behaviors are not yet consistent.",
+            "Members show kindness, hospitality, and mercy. They support, encourage, and pray for one another, visit the sick, and assist those in need."
         ]
     },
     {
         "label": "LOVE (1 Cor. 13, …but have not love, I am nothing. Gal. 5, love)",
         "anchors": [
-            "There is hostility, selfish ambition, factions, and discord within the community. There is hatred between leaders and members.",
-            "Members are generally amicable to each other but lack the depth of friendship.",
-            "Members genuinely love each other, linger for fellowship and prayer, share meals, and experience joy and peace in the community."
+            "Hostility, factions, or selfish ambition are present; relationships are strained or divisive.",
+            "Members are generally amicable and respectful, but relationships lack depth or sustained care.",
+            "Members show love for one another, enjoy fellowship, share resources, pray for each other, and participate in communal activities beyond the confines of the church building."
         ]
     },
     {
         "label": "TRUSTWORTHINESS (Matt.5, pure in heart; 1 Cor.13, always trusts, always hopes)",
         "anchors": [
-            "There is a general mistrust and suspicion between the members and leaders.",
-            "A few people sow discord, but a majority still affirm the pastor's leadership.",
-            "The congregation fully trusts the church's leadership, who emulate Christ-like living, leading, and serving."
+            "Mistrust and suspicion dominate; contempt or open criticism is common.",
+            "Some discord exists, but most members generally respect and affirm leadership.",
+            "The congregation fully trusts leadership, and leaders consistently demonstrate integrity and biblical alignment in life and ministry."
         ]
     },
     {
         "label": "HARMONY (Gal. 5, peace; Matt. 5, peacemaker; 1 Cor. 13, it keeps no record of wrongs)",
         "anchors": [
-            "There is discord, jealousy, fighting, gossip, and offensive language. People have left the church without reconciliation.",
-            "Past offenses are recognized, but efforts are minimal to prevent repetition.",
-            "There is forgiveness, general peace, and harmony within the community."
+            "Gossip, jealousy, unresolved conflicts, or division are common.",
+            "Past conflicts may remain unresolved, but members are increasingly sensitive to reconciliation and avoiding repeated mistakes.",
+            "Conflicts are addressed with forgiveness and understanding. Members and leaders apologize readily, maintain peace, and cultivate strong relational bonds."
         ]
     },
     {
         "label": "YEARNING for truth (1 Cor. 13, love does not delight in evil, but rejoices with the truth)",
         "anchors": [
-            "People do not engage with Scripture or practice personal prayer and study.",
-            "Some participate in discipleship or care groups but show limited initiative.",
-            "People eagerly learn from Scriptures, grow in faith, and actively live and serve in their community."
+            "Members show little interest in Scripture, prayer, or personal spiritual growth.",
+            "Members engage in discipleship, and other faith-building activities, though their participation and personal practice are not yet consistent.",
+            "Members actively seek to learn, study Scripture, grow in faith, disciple others, and apply biblical principles in daily life."
         ]
     }
 ]
@@ -622,6 +622,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
