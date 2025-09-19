@@ -353,6 +353,7 @@ Please reflect on your church honestly, then rate your church from **1 to 10**:
 - **1–3** → Closely resembles the unhealthy description  
 - **4–7** → Somewhere in between; growing in this area  
 - **8–10** → Strongly reflects the healthy description
+
 Within each range, lower numbers mean worse health and higher numbers mean better health. For example, in the 1–3 range, 1 is more unhealthy than 2, and 2 is more unhealthy than 3. This same principle applies across the scale (4–7 and 8–10): higher numbers always indicate better health.
 """
     )
@@ -621,6 +622,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
