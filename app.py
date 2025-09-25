@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 import re
 import pandas as pd
+import base64
 
 import gspread
 #from google.oauth2.service_account import Credentials
@@ -126,15 +127,22 @@ def classify(average):
         return ("Critical Condition",
                 "Comprehensive renewal needed; reflects fundamental spiritual health problems")
 
+
+
 # =========================
 # APP SETUP
 # =========================
 st.set_page_config(page_title="H.E.A.L.T.H.Y. Church Checklist", layout="centered")
 
+# --- Centered Logo (PNG, works locally) ---
+with open("GCMTC_LogoTeal.png", "rb") as f:
+    img_data = f.read()
+encoded = base64.b64encode(img_data).decode()
+
 st.markdown(
-    """
+    f"""
     <div style="text-align: center;">
-        <img src="GCMTC_LogoTeal.png" alt="Organization Logo" width="300">
+        <img src="data:image/png;base64,{encoded}" alt="Organization Logo" width="300">
     </div>
     """,
     unsafe_allow_html=True
@@ -636,6 +644,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
