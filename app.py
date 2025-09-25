@@ -131,8 +131,14 @@ def classify(average):
 # =========================
 st.set_page_config(page_title="H.E.A.L.T.H.Y. Church Checklist", layout="centered")
 
-# --- Logo (PNG) ---
-st.image("GCMTC_LogoTeal.png", use_container_width=False, width=300)
+st.markdown(
+    """
+    <div style="text-align: center;">
+        <img src="GCMTC_LogoTeal.png" alt="Organization Logo" width="300">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # --- Title and subtitle ---
 st.title("🧭 H.E.A.L.T.H.Y. Church Checklist")
@@ -630,6 +636,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
