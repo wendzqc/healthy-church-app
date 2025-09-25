@@ -131,28 +131,15 @@ def classify(average):
 # =========================
 st.set_page_config(page_title="H.E.A.L.T.H.Y. Church Checklist", layout="centered")
 
-# --- Centered, Responsive PNG logo ---
+# --- Logo (PNG) ---
+st.image("GCMTC_LogoTeal.png", use_container_width=False, width=300)
+
+# --- Title and subtitle ---
+st.title("🧭 H.E.A.L.T.H.Y. Church Checklist")
 st.markdown(
-    """
-    <style>
-        .centered-logo img {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            max-width: 300px;  /* limit to 300px wide */
-            width: 100%;       /* responsive on small screens */
-            height: auto;      /* keep aspect ratio */
-        }
-    </style>
-    <div class="centered-logo">
-        <img src="GCMTC_LogoTeal.png" alt="Organization Logo">
-    </div>
-    """,
+    "<div style='font-size:13px; color:gray;'>by Jason Richard Tan and Wendell Q. Campano</div>",
     unsafe_allow_html=True
 )
-
-st.title("🧭 H.E.A.L.T.H.Y. Church Checklist")
-st.markdown("<div style='font-size:13px; color:gray;'>by Jason Richard Tan and Wendell Q. Campano</div>", unsafe_allow_html=True)
 st.divider()
 
 # =========================
@@ -643,6 +630,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
