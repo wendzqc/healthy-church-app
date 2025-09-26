@@ -394,7 +394,12 @@ Within each range, lower numbers mean worse health and higher numbers mean bette
         for q in questions:
             col1, col2 = st.columns([10, 1])
             with col1:
-                st.markdown(f"### {q['label']}")
+                # st.subheader(q["label"])
+                # custom label rendering: big text but not fully bold
+                 st.markdown(
+                    f"<div style='font-size:22px; font-weight:normal;'>{q['label']}</div>",
+                    unsafe_allow_html=True
+                )
             with col2:
                 with st.popover("❓"):
                     st.markdown(q["description"])
@@ -660,6 +665,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
