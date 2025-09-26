@@ -223,7 +223,10 @@ questions = [
     }
 ]
 
-main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in questions]
+main_virtues = [
+    re.match(r"[*_]*([A-Z\s]+)", q["label"]).group(1).strip()
+    for q in questions
+]
 
 # Detailed instructions above the input
 with st.expander("📖 How to Use the App"):
@@ -657,6 +660,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
