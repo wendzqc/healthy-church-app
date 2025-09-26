@@ -224,7 +224,13 @@ questions = [
         ]
     }
 ]
-
+for q in questions:
+    response = st.radio(
+        q["label"],
+        options=["1", "2", "3"],
+        format_func=lambda x: q["anchors"][int(x)-1],
+        help=q.get("help", None)
+    )
 main_virtues = [re.match(r"[A-Z\s]+", q["label"]).group(0).strip() for q in questions]
 
 # Detailed instructions above the input
@@ -651,6 +657,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
