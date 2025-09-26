@@ -159,7 +159,8 @@ st.divider()
 # =========================
 questions = [
     {
-        "label": "**HUMILITY** (_Mababang loob o Mapagpakumbaba_)",
+        #"label": "**HUMILITY** (_Mababang loob o Mapagpakumbaba_)",
+        "label": "<b>HUMILITY</b> (<i>Mababang loob o Mapagpakumbaba</i>)",
         "description": "The posture of the heart that recognizes one’s complete dependence on God, placing His will above personal pride, ambition, or self-sufficiency. It is the acknowledgement that all wisdom, strength, and provision come from Him (James 4:6; Philippians 2:3–8; Matthew 5:5), and therefore one lives not for self-exaltation but for God’s glory and the good of others. Humility is expressed through obedience to God, service to others, a teachable spirit, and a willingness to submit rather than dominate. It reflects the character of Christ, who, though equal with God, emptied Himself and became a servant, ultimately modeling perfect humility in His life, death, and resurrection.",
         "anchors": [
             "A spirit of competition, boasting, or arrogance dominates, especially in board meetings. Members rarely apologize or seek reconciliation when conflicts arise.",
@@ -665,6 +666,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
