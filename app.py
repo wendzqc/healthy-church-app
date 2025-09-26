@@ -166,7 +166,6 @@ st.divider()
 # =========================
 questions = [
     {
-        #"label": "**HUMILITY** (_Mababang loob o Mapagpakumbaba_)",
         "label": "<b>HUMILITY</b> (<i>Mababang loob o Mapagpakumbaba</i>)",
         "description": "The posture of the heart that recognizes one’s complete dependence on God, placing His will above personal pride, ambition, or self-sufficiency. It is the acknowledgement that all wisdom, strength, and provision come from Him (James 4:6; Philippians 2:3–8; Matthew 5:5), and therefore one lives not for self-exaltation but for God’s glory and the good of others. Humility is expressed through obedience to God, service to others, a teachable spirit, and a willingness to submit rather than dominate. It reflects the character of Christ, who, though equal with God, emptied Himself and became a servant, ultimately modeling perfect humility in His life, death, and resurrection.",
         "anchors": [
@@ -176,7 +175,7 @@ questions = [
         ]
     },
     {
-        "label": "**ENDURANCE in the Faith** (_Matiyagang nagpapatuloy, Nananatiling tapat, o Nagtitiyaga hanggang wakas_)",
+        "label": "<b>ENDURANCE in the Faith</b> (<i>Matiyagang nagpapatuloy, Nananatiling tapat, o Nagtitiyaga hanggang wakas</i>)",
         "description": "Endurance in the faith is the steadfast perseverance to remain faithful to God and His promises despite trials, suffering, or opposition. It is the spiritual strength to press on in obedience and hope, trusting that God is working all things for good and that His reward is sure. Scripture exhorts believers to “run with perseverance the race marked out for us, fixing our eyes on Jesus” (Hebrews 12:1–2), to “rejoice in our sufferings, knowing that suffering produces endurance” (Romans 5:3–4), and to remain steadfast under trial, for “when he has stood the test he will receive the crown of life” (James 1:12, 1Corinthians 13:7). Endurance, therefore, is both a gift of God’s sustaining grace and the believer’s faithful response to keep walking with Christ until the end.",
         "anchors": [
             "People leave or disengage when challenges arise. Ministry participation is minimal or conditional.",
@@ -185,7 +184,7 @@ questions = [
         ]
     },
     {
-        "label": "**AUTHENTICITY** (_Pusong Dalisay, malinis na budhi, at tapat na pananampalataya o mabuting loob_)",
+        "label": "<b>AUTHENTICITY</b> (<i>Pusong Dalisay, malinis na budhi, at tapat na pananampalataya o mabuting loob</i>)",
         "description": "Authenticity is living with integrity and sincerity before God and others, where one’s inner life aligns with outward actions. It is the opposite of hypocrisy, calling believers to be genuine in faith, speech, and conduct, reflecting the truth of Christ within them. Scripture reminds us to live in the light, for “whoever lives by the truth comes into the light, so that it may be seen plainly that what they have done has been done in the sight of God” (John 3:21), and to “let love be genuine” (Romans 12:9). Authenticity means walking in truth (3 John 1:4, 1 Timothy 1:5), confessing weaknesses honestly, and allowing God’s Spirit to shape a life that is real, transparent, and consistent with the gospel.",
         "anchors": [
             "Attendance is mostly habitual or for appearances; kindness, generosity, and public testimonies are minimal.",
@@ -194,7 +193,7 @@ questions = [
         ]
     },
     {
-        "label": "**LOVE** (_Pag-ibig_)",
+        "label": "<b>LOVE</b> (<i>Pag-ibig</i>)",
         "description": "Love is the highest virtue and the defining mark of the Christian life, as beautifully described in 1 Corinthians 13. It is not merely an emotion but a selfless commitment to seek the good of others, grounded in God’s own love. Paul teaches that love is patient and kind; it does not envy, boast, or act with pride. It is not rude, self-seeking, or easily angered, and it keeps no record of wrongs. Love rejoices with the truth, always protects, always trusts, always hopes, and always perseveres (1 Corinthians 13:4–7). Unlike gifts or accomplishments that will pass away, love is eternal, for “the greatest of these is love” (1 Corinthians 13:13).",
         "anchors": [
             "Hostility, factions, or selfish ambition are present; relationships are strained or divisive.",
@@ -203,7 +202,7 @@ questions = [
         ]
     },
     {
-        "label": "**TRUSTWORTHINESS** (_Mapagkakatiwalaan_)",
+        "label": "<b>TRUSTWORTHINESS</b> (<i>Mapagkakatiwalaan</i>)",
         "description": "Trustworthiness is the quality of being faithful, reliable, and dependable in character and action, reflecting the steadfastness of God Himself. Scripture calls believers to let their “Yes” be yes and their “No” be no (Matthew 5:37), showing integrity in word and deed. A trustworthy person keeps promises, fulfills responsibilities, and acts with honesty, echoing the wisdom of Proverbs 12:22: “The Lord detests lying lips, but he delights in people who are trustworthy.” Ultimately, trustworthiness is rooted in God’s faithfulness (Lamentations 3:22–23), and believers are called to mirror His character by living with integrity so that others may confidently depend on their word and witness.",
         "anchors": [
             "Mistrust and suspicion dominate; contempt or open criticism is common.",
@@ -212,7 +211,7 @@ questions = [
         ]
     },
     {
-        "label": "**HARMONY** (_Pakikiisa at Nagkaisa_)",
+        "label": "<b>HARMONY</b> (<i>Pakikiisa at Nagkaisa</i>)",
         "description": "Harmony or peace within a community of believers is the unity and mutual love that flows from Christ’s reconciling work, binding diverse people together as one body under His lordship. Believers are called to “make every effort to keep the unity of the Spirit through the bond of peace” (Ephesians 4:3) and to “live in harmony with one another” (Romans 12:16), showing patience, forgiveness, and compassion. This peace is not merely the absence of conflict but the active presence of reconciliation, encouragement, and shared life in Christ, who Himself is our peace (Ephesians 2:14). When believers “let the peace of Christ rule in [their] hearts” (Colossians 3:15), the church becomes a living testimony of God’s kingdom marked by love, unity, and mutual upbuilding.",
         "anchors": [
             "Gossip, jealousy, unresolved conflicts, or division are common.",
@@ -221,7 +220,7 @@ questions = [
         ]
     },
     {
-        "label": "**YEARNING for truth** (_Kinagagalak ang katotohanan_)",
+        "label": "<b>YEARNING for truth</b> (<i>Kinagagalak ang katotohanan</i>)",
         "description": "Yearning for truth is the deep longing of the heart to know, embrace, and live according to God’s Word, for He Himself is the source of all truth. Scripture teaches that Jesus is “the way, the truth, and the life” (John 14:6), and those who belong to Him are called to seek His truth earnestly, like the psalmist who prays, “Teach me your way, Lord, that I may rely on your faithfulness; give me an undivided heart, that I may fear your name” (Psalm 86:11, 1 Corinthians 13:6). This yearning is expressed in a hunger for God’s Word (Psalm 119:105, 160), a desire to walk in integrity, and a willingness to reject falsehood and deception. It is the Spirit of truth (John 16:13) who guides believers into a deeper knowledge of Christ, shaping them to love truth and live by it in every aspect of life.",
         "anchors": [
             "Members show little interest in Scripture, prayer, or personal spiritual growth.",
@@ -407,7 +406,7 @@ Within each range, lower numbers mean worse health and higher numbers mean bette
                 # st.subheader(q["label"])
                 # custom label rendering: big text but not fully bold
                  st.markdown(
-                    f"<div style='font-size:22px; font-weight:normal;'>{q['label']}</div>",
+                    f"<div style='font-size:24px; font-weight:600; margin-top:0.8em; margin-bottom:0.4em;'>{q['label']}</div>",
                     unsafe_allow_html=True
                 )
             with col2:
@@ -675,6 +674,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
