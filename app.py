@@ -162,7 +162,7 @@ st.divider()
 questions = [
     {
         "label": "HUMILITY",
-        "help": "Matt 5, meek; 1 Cor 13, not boastful, not proud, not self-seeking";
+        "help": "Matt 5, meek; 1 Cor 13, not boastful, not proud, not self-seeking",
         "anchors": [
             "A spirit of competition, boasting, or arrogance dominates, especially in board meetings. Members rarely apologize or seek reconciliation when conflicts arise.",
             "Leaders and members sometimes seek forgiveness and reconciliation, though these behaviors are rarely noticed.",
@@ -645,6 +645,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
