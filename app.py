@@ -31,6 +31,13 @@ from PIL import Image
 
 from google.oauth2.service_account import Credentials
 
+def clean_label(label: str) -> str:
+    # 1. Remove HTML tags like <b>...</b>, <i>...</i>
+    text = re.sub(r"<.*?>", "", label)
+    # 2. Remove Markdown bold/italic markers ** and _
+    text = text.replace("**", "").replace("*", "").replace("_", "")
+    return text.strip()
+
 # =========================
 # GOOGLE SHEETS SETUP
 # =========================
@@ -224,10 +231,12 @@ questions = [
     }
 ]
 
-main_virtues = [
-    re.match(r"[*_]*([A-Z\s]+)", q["label"]).group(1).strip()
-    for q in questions
-]
+main_virtues = []
+for q in questions:
+    cleaned = clean_label(q["label"])
+    # if you only want the first part (before parentheses)
+    virtue = cleaned.split("(")[0].strip()
+    main_virtues.append(virtue)
 
 # Detailed instructions above the input
 with st.expander("📖 How to Use the App"):
@@ -666,6 +675,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
