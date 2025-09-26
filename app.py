@@ -170,7 +170,8 @@ questions = [
         ]
     },
     {
-        "label": "ENDURANCE in the Faith (Gal. 5, patience, faithfulness; Matt 5, faithful in poverty, endures persecution; 1 Cor 13, always perseveres)",
+        "label": "ENDURANCE in the Faith",
+        "help": "Gal. 5, patience, faithfulness; Matt 5, faithful in poverty, endures persecution; 1 Cor 13, always perseveres",
         "anchors": [
             "People leave or disengage when challenges arise. Ministry participation is minimal or conditional.",
             "Members tend to participate only when convenient and rarely persevere through difficulties or changes.",
@@ -178,7 +179,8 @@ questions = [
         ]
     },
     {
-        "label": "AUTHENTICITY (1 Cor 13, kind, not envious, not boastful, not proud, not rude, not self-seeking; Gal. 5, joy gentleness, self-control; Matt 5, merciful)",
+        "label": "AUTHENTICITY",
+        "help": "1 Cor 13, kind, not envious, not boastful, not proud, not rude, not self-seeking; Gal. 5, joy gentleness, self-control; Matt 5, merciful",
         "anchors": [
             "Attendance is mostly habitual or for appearances; kindness, generosity, and public testimonies are minimal.",
             "Members show support, encouragement, and eagerness to have fellowship with one another, though these behaviors are not yet consistent.",
@@ -186,7 +188,8 @@ questions = [
         ]
     },
     {
-        "label": "LOVE (1 Cor. 13, …but have not love, I am nothing. Gal. 5, love)",
+        "label": "LOVE",
+        "help": "1 Cor. 13, …but have not love, I am nothing. Gal. 5, love",
         "anchors": [
             "Hostility, factions, or selfish ambition are present; relationships are strained or divisive.",
             "Members are generally amicable and respectful, but relationships lack depth or sustained care.",
@@ -194,7 +197,8 @@ questions = [
         ]
     },
     {
-        "label": "TRUSTWORTHINESS (Matt.5, pure in heart; 1 Cor.13, always trusts, always hopes)",
+        "label": "TRUSTWORTHINESS",
+        "help": "Matt.5, pure in heart; 1 Cor.13, always trusts, always hopes",
         "anchors": [
             "Mistrust and suspicion dominate; contempt or open criticism is common.",
             "Some discord exists, but most members generally respect and affirm leadership.",
@@ -202,7 +206,8 @@ questions = [
         ]
     },
     {
-        "label": "HARMONY (Gal. 5, peace; Matt. 5, peacemaker; 1 Cor. 13, it keeps no record of wrongs)",
+        "label": "HARMONY",
+        "help": " (Gal. 5, peace; Matt. 5, peacemaker; 1 Cor. 13, it keeps no record of wrongs)",
         "anchors": [
             "Gossip, jealousy, unresolved conflicts, or division are common.",
             "Past conflicts may remain unresolved, but members are increasingly sensitive to reconciliation and avoiding repeated mistakes.",
@@ -210,7 +215,8 @@ questions = [
         ]
     },
     {
-        "label": "YEARNING for truth (1 Cor. 13, love does not delight in evil, but rejoices with the truth)",
+        "label": "YEARNING for truth",
+        "help": "1 Cor. 13, love does not delight in evil, but rejoices with the truth",
         "anchors": [
             "Members show little interest in Scripture, prayer, or personal spiritual growth.",
             "Members engage in discipleship, and other faith-building activities, though their participation and personal practice are not yet consistent.",
@@ -645,6 +651,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
