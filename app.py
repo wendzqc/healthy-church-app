@@ -135,7 +135,7 @@ def classify(average):
 st.set_page_config(page_title="H.E.A.L.T.H.Y. Church Checklist", layout="centered")
 
 # --- Centered Logo (PNG, works locally) ---
-with open("GCMTC_LogoTeal.jpg", "rb") as f:
+with open("GCMTC_LogoTeal.png", "rb") as f:
     img_data = f.read()
 encoded = base64.b64encode(img_data).decode()
 
@@ -644,6 +644,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
