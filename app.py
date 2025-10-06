@@ -415,7 +415,7 @@ Within each range, lower numbers mean worse health and higher numbers mean bette
     
             # keep anchors displayed as before
             st.markdown(f"**Unhealthy (1–3):** {q['anchors'][0]}")
-            st.markdown(f"**Moderate (4–7):** {q['anchors'][1]}")
+            st.markdown(f"**Moderate/Growing (4–7):** {q['anchors'][1]}")
             st.markdown(f"**Healthy (8–10):** {q['anchors'][2]}")
     
             score = st.slider("Score: 1 (worst) → 10 (best)", 1, 10, 5, key=q["label"])
@@ -674,6 +674,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
