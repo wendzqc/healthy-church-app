@@ -220,7 +220,7 @@ questions = [
         ]
     },
     {
-        "label": "<b>YEARNING for truth</b> (<i>Kinagagalak ang katotohanan</i>)",
+        "label": "<b>YEARNING for Truth</b> (<i>Kinagagalak ang katotohanan</i>)",
         "description": "Yearning for truth is the deep longing of the heart to know, embrace, and live according to God’s Word, for He Himself is the source of all truth. Scripture teaches that Jesus is “the way, the truth, and the life” (John 14:6), and those who belong to Him are called to seek His truth earnestly, like the psalmist who prays, “Teach me your way, Lord, that I may rely on your faithfulness; give me an undivided heart, that I may fear your name” (Psalm 86:11, 1 Corinthians 13:6). This yearning is expressed in a hunger for God’s Word (Psalm 119:105, 160), a desire to walk in integrity, and a willingness to reject falsehood and deception. It is the Spirit of truth (John 16:13) who guides believers into a deeper knowledge of Christ, shaping them to love truth and live by it in every aspect of life.",
         "anchors": [
             "Members show little interest in Scripture, prayer, or personal spiritual growth.",
@@ -406,7 +406,7 @@ Within each range, lower numbers mean worse health and higher numbers mean bette
                 # st.subheader(q["label"])
                 # custom label rendering: big text but not fully bold
                  st.markdown(
-                        f"<div style='font-size:24px; font-weight:normal; margin-top:0.8em; margin-bottom:0.4em;'>{q['label']}</div>",
+                        f"<div style='font-size:26px; font-weight:normal; margin-top:0.8em; margin-bottom:0.4em;'>{q['label']}</div>",
                     unsafe_allow_html=True
                 )
             with col2:
@@ -558,7 +558,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     # ------------------------
     st.subheader("2️⃣ Filter Survey Results by Church Code and Control ID")
     uploaded_ids = st.file_uploader(
-        "📂 Upload a file containing **Code**(for Church Code) and **Control_ID** to filter results (e.g., official church survey)",
+        "📂 Upload a file containing **Code** (for Church Code) and **Control_ID** to filter results (e.g., official church survey)",
         type=["xlsx", "xls", "csv"],
         key="id_file"
     )
@@ -674,6 +674,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
