@@ -505,74 +505,63 @@ st.divider()
 # =========================
 # OTHER OPTIONS (Accordion)
 # =========================
-with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"):
+if "expander_open" not in st.session_state:
+    st.session_state.expander_open = False
+
+with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)", expanded=st.session_state.expander_open):
     
     # ------------------------
-    # 1. Filter by Date (Now Option 1)
+    # 1. Filter by Date
     # ------------------------
     st.subheader("1️⃣ Filter Survey Results by Date")
     st.info("View aggregated results for a Church Code within a specific date range.")
     
-    # Input Church Code
     date_filter_code = st.text_input(
         "Enter Church Code to filter",
         value=st.session_state.church_code,
         key="date_filter_code"
     )
     
-    # Separate Start and End Date selection
     start_date = st.date_input("Select start date (yyyy/mm/dd)", value=datetime(2025, 1, 1), key="start_date")
     end_date = st.date_input("Select end date (yyyy/mm/dd)", value=datetime.today(), key="end_date")
     
     if st.button("📊 View Date-Filtered Results", key="date_filter_btn"):
+        st.session_state.expander_open = True  # keep expander open
         if not date_filter_code.strip():
             st.warning("⚠️ Please enter a Church Code before filtering.")
+        elif start_date > end_date:
+            st.warning("⚠️ Please select a valid date range (start date must be before end date).")
         else:
             try:
-                # Ensure valid range
-                if start_date > end_date:
-                    st.warning("⚠️ Please select a valid date range (start date must be before end date).")
+                data = load_data()
+                df = pd.DataFrame(data)
+                df["Code"] = df["Code"].astype(str).str.strip()
+                df["Timestamp"] = pd.to_datetime(df["Timestamp"], errors="coerce")
+
+                df_code = df[df["Code"] == date_filter_code.strip()]
+                start_dt = pd.to_datetime(start_date)
+                end_dt = pd.to_datetime(end_date) + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
+                
+                df_filtered = df_code[(df_code["Timestamp"] >= start_dt) & (df_code["Timestamp"] <= end_dt)]
+
+                if df_filtered.empty:
+                    st.warning("⚠️ No responses found for this Church Code in the selected date range.")
                 else:
-                    data = load_data()
-                    df = pd.DataFrame(data)
-                    df["Code"] = df["Code"].astype(str).str.strip()
-                    df["Timestamp"] = pd.to_datetime(df["Timestamp"], errors="coerce")
-    
-                    # Filter by code
-                    df_code = df[df["Code"] == date_filter_code.strip()]
-    
-                    # Filter by date
-                    start_dt = pd.to_datetime(start_date)
-                    end_dt = pd.to_datetime(end_date) + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
-                    
-                    df_filtered = df_code[
-                        (df_code["Timestamp"] >= start_dt) &
-                        (df_code["Timestamp"] <= end_dt)
-                        ]
-    
-                    if df_filtered.empty:
-                        st.warning("⚠️ No responses found for this Church Code in the selected date range.")
-                    else:
-                        avg_scores = df_filtered[[f"Q{i}" for i in range(1, 8)]].mean().tolist()
-                        average = float(np.mean(avg_scores))
-                        classification, interpretation = classify(average)
-    
-                        st.header(f"📊 Aggregated Results for {date_filter_code.strip()}")
-    
-                        # Show selected date range
-                        st.markdown(f"**Date Range:** {start_date.strftime('%Y-%m-%d')} - {end_date.strftime('%Y-%m-%d')}")
-    
-                        st.markdown(f"**Number of respondents:** {len(df_filtered)}")
-                        st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
-                        st.write(f"**Health Status:** _{classification}_")
-                        st.write(f"**Interpretation:** {interpretation}")
-    
-                        st.subheader("🕸️ Church Health Overview")
-                        draw_custom_radar(avg_scores, main_virtues)
-    
+                    avg_scores = df_filtered[[f"Q{i}" for i in range(1, 8)]].mean().tolist()
+                    average = float(np.mean(avg_scores))
+                    classification, interpretation = classify(average)
+
+                    st.header(f"📊 Aggregated Results for {date_filter_code.strip()}")
+                    st.markdown(f"**Date Range:** {start_date.strftime('%Y-%m-%d')} - {end_date.strftime('%Y-%m-%d')}")
+                    st.markdown(f"**Number of respondents:** {len(df_filtered)}")
+                    st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
+                    st.write(f"**Health Status:** _{classification}_")
+                    st.write(f"**Interpretation:** {interpretation}")
+                    st.subheader("🕸️ Church Health Overview")
+                    draw_custom_radar(avg_scores, main_virtues)
             except Exception:
                 st.warning("⚠️ Please select a valid range.")
-    
+
     st.divider()
 
     # ------------------------
@@ -580,19 +569,13 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     # ------------------------
     st.subheader("2️⃣ Filter Survey Results by Church Code and Control ID")
     uploaded_ids = st.file_uploader(
-        "📂 Upload a file containing **Code** (for Church Code) and **Control_ID** to filter results (e.g., official church survey)",
+        "📂 Upload a file containing **Code** (for Church Code) and **Control_ID**",
         type=["xlsx", "xls", "csv"],
         key="id_file"
     )
 
-    st.caption("✅ Example format of the file:")
-    sample_ids = pd.DataFrame({
-        "Code": ["CH001", "CH001"],
-        "Control_ID": ["A123", "A124"]
-    })
-    st.dataframe(sample_ids, hide_index=True)
-
     if uploaded_ids:
+        st.session_state.expander_open = True  # keep expander open
         if uploaded_ids.name.endswith(".csv"):
             df_upload = pd.read_csv(uploaded_ids)
         else:
@@ -604,20 +587,13 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
         required_cols = {"code", "control_id"}
         if not required_cols.issubset(set(df_upload.columns)):
-            st.error("⚠️ Invalid file. Must contain columns: Code (or Church_Code) and Control_ID.")
+            st.error("⚠️ Invalid file. Must contain columns: Code and Control_ID.")
         else:
             st.success(f"✅ File accepted. {len(df_upload)} control IDs loaded.")
-
-            # Fetch Google Sheet data
             data = load_data()
             df_sheet = pd.DataFrame(data)
             df_sheet.columns = df_sheet.columns.str.strip().str.lower()
-
-            merged = df_sheet.merge(
-                df_upload,
-                on=["code", "control_id"],
-                how="inner"
-            )
+            merged = df_sheet.merge(df_upload, on=["code", "control_id"], how="inner")
 
             if merged.empty:
                 st.warning("⚠️ No matching respondents found in Google Sheet.")
@@ -626,21 +602,15 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
                 avg_scores = merged[q_cols].mean().tolist()
                 average = float(np.mean(avg_scores))
                 classification, interpretation = classify(average)
-
-                #ph_time = datetime.now(ZoneInfo("Asia/Manila")).strftime("%Y-%m-%d %H:%M:%S")
                 code_counts = merged['code'].value_counts()
                 formatted_codes = ", ".join([f"{code} ({count})" for code, count in code_counts.items()])
-                
+
                 st.header("📊 Results (Filtered by Uploaded List)")
                 st.info(f"Church Code(s) used: **{formatted_codes}**")
-
-                #st.info(f"Church Code(s) used: **{', '.join(merged['code'].unique())}**")
                 st.write(f"Number of respondents: {len(merged)}")
                 st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
                 st.write(f"**Health Status:** _{classification}_")
                 st.write(f"**Interpretation:** {interpretation}")
-                #st.write(f"📅 Timestamp: {ph_time}")
-
                 st.subheader("🕸️ Church Health Overview")
                 draw_custom_radar(avg_scores, main_virtues)
 
@@ -651,24 +621,13 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     # ------------------------
     st.subheader("3️⃣ View Direct Survey Results (Upload File)")
     uploaded_file = st.file_uploader(
-        "📂 Upload a file (.xls, .xlsx, .csv) containing ONLY the columns Q1–Q7 (one row per respondent)",
+        "📂 Upload a file (.xls, .xlsx, .csv) containing ONLY the columns Q1–Q7",
         type=["xlsx", "xls", "csv"],
         key="survey_file"
     )
 
-    st.caption("✅ Example format of the file (one row = one respondent):")
-    sample_df = pd.DataFrame({
-        "Q1": [4, 5],
-        "Q2": [3, 4],
-        "Q3": [5, 5],
-        "Q4": [2, 3],
-        "Q5": [4, 4],
-        "Q6": [3, 2],
-        "Q7": [5, 4],
-    })
-    st.dataframe(sample_df, hide_index=True)
-
     if uploaded_file:
+        st.session_state.expander_open = True  # keep expander open
         if uploaded_file.name.endswith(".csv"):
             df = pd.read_csv(uploaded_file)
         else:
@@ -679,8 +638,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
         if list(df.columns) != expected_cols:
             st.error(
-                f"⚠️ Invalid file format. "
-                f"The file must contain ONLY these columns in order: {', '.join([c.upper() for c in expected_cols])}"
+                f"⚠️ Invalid file format. Must contain ONLY these columns in order: {', '.join([c.upper() for c in expected_cols])}"
             )
         else:
             df.columns = [c.upper() for c in df.columns]
@@ -693,56 +651,5 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
             st.markdown(f"**Average Score (Q1–Q7):** {average:.2f}")
             st.write(f"**Health Status:** _{classification}_")
             st.write(f"**Interpretation:** {interpretation}")
-
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
