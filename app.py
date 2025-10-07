@@ -508,25 +508,30 @@ st.divider()
 if "expander_open" not in st.session_state:
     st.session_state.expander_open = False
 
-with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)", expanded=st.session_state.expander_open):
+# Render the expander
+with st.expander(
+    "⚙️ Other Options for Viewing/Filtering Results (Optional)",
+    expanded=st.session_state.expander_open
+) as exp:
     
+    # Update session_state whenever user toggles the expander
+    st.session_state.expander_open = exp.expanded  # works in Streamlit >=1.25
+
     # ------------------------
-    # 1. Filter by Date
+    # 1️⃣ Filter by Date
     # ------------------------
     st.subheader("1️⃣ Filter Survey Results by Date")
     st.info("View aggregated results for a Church Code within a specific date range.")
-    
+
     date_filter_code = st.text_input(
         "Enter Church Code to filter",
         value=st.session_state.church_code,
         key="date_filter_code"
     )
-    
     start_date = st.date_input("Select start date (yyyy/mm/dd)", value=datetime(2025, 1, 1), key="start_date")
     end_date = st.date_input("Select end date (yyyy/mm/dd)", value=datetime.today(), key="end_date")
-    
+
     if st.button("📊 View Date-Filtered Results", key="date_filter_btn"):
-        st.session_state.expander_open = True  # keep expander open
         if not date_filter_code.strip():
             st.warning("⚠️ Please enter a Church Code before filtering.")
         elif start_date > end_date:
@@ -541,7 +546,6 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
                 df_code = df[df["Code"] == date_filter_code.strip()]
                 start_dt = pd.to_datetime(start_date)
                 end_dt = pd.to_datetime(end_date) + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
-                
                 df_filtered = df_code[(df_code["Timestamp"] >= start_dt) & (df_code["Timestamp"] <= end_dt)]
 
                 if df_filtered.empty:
@@ -565,7 +569,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     st.divider()
 
     # ------------------------
-    # 2. Upload Respondent List (Code & Control_ID)
+    # 2️⃣ Filter by Church Code & Control ID
     # ------------------------
     st.subheader("2️⃣ Filter Survey Results by Church Code and Control ID")
     uploaded_ids = st.file_uploader(
@@ -575,7 +579,6 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     )
 
     if uploaded_ids:
-        st.session_state.expander_open = True  # keep expander open
         if uploaded_ids.name.endswith(".csv"):
             df_upload = pd.read_csv(uploaded_ids)
         else:
@@ -617,7 +620,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     st.divider()
 
     # ------------------------
-    # 3. Upload Survey Results (Q1–Q7)
+    # 3️⃣ Upload Survey Results (Q1–Q7)
     # ------------------------
     st.subheader("3️⃣ View Direct Survey Results (Upload File)")
     uploaded_file = st.file_uploader(
@@ -627,7 +630,6 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
     )
 
     if uploaded_file:
-        st.session_state.expander_open = True  # keep expander open
         if uploaded_file.name.endswith(".csv"):
             df = pd.read_csv(uploaded_file)
         else:
