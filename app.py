@@ -515,7 +515,7 @@ with st.expander(
 ) as exp:
     
     # Update session_state whenever user toggles the expander
-    st.session_state.expander_open = exp.expanded  # works in Streamlit >=1.25
+    #st.session_state.expander_open = exp.expanded  # works in Streamlit >=1.25
 
     # ------------------------
     # 1️⃣ Filter by Date
@@ -655,3 +655,4 @@ with st.expander(
             st.write(f"**Interpretation:** {interpretation}")
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
