@@ -68,7 +68,7 @@ def get_sheet():
     client = gspread.authorize(creds)
     return client.open_by_url(st.secrets["app"]["sheet_url"]).sheet1
 
-@st.cache_data(ttl=60)  # caches the actual rows for 60 seconds
+@st.cache_data(ttl=30)  # caches the actual rows for 60 seconds
 def load_data():
     sheet = get_sheet()  # fresh credentials every call
     return sheet.get_all_records()
@@ -655,3 +655,4 @@ with st.expander(
             st.write(f"**Interpretation:** {interpretation}")
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
