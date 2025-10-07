@@ -52,9 +52,6 @@ def append_response(row_data):
                 print("Google Sheets write error:", e)
                 return False    
                 
-@st.cache_data(ttl=30)  # Cache for x seconds, ttl=30 -> 30 seconds
-def load_data():
-    return sheet.get_all_records()
 # =========================
 # GOOGLE SHEETS SETUP
 # =========================
@@ -63,13 +60,15 @@ scope = [
     "https://www.googleapis.com/auth/drive",
 ]
 
-@st.cache_resource
 def get_sheet():
     creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"])
     client = gspread.authorize(creds)
     return client.open_by_url(st.secrets["app"]["sheet_url"]).sheet1
 
-sheet = get_sheet()
+@st.cache_data(ttl=30)
+def load_data():
+    sheet = get_sheet()
+    return sheet.get_all_records()
 
 # =========================
 # VISUALS
@@ -694,6 +693,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
