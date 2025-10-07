@@ -20,7 +20,7 @@ from matplotlib.colors import LinearSegmentedColormap
 import re
 import pandas as pd
 import base64
-
+import time
 import gspread
 #from google.oauth2.service_account import Credentials
 from datetime import datetime
@@ -37,7 +37,24 @@ def clean_label(label: str) -> str:
     # 2. Remove Markdown bold/italic markers ** and _
     text = text.replace("**", "").replace("*", "").replace("_", "")
     return text.strip()
-
+    
+def append_response(row_data):
+    retries = 3
+    for attempt in range(retries):
+        try:
+            sheet.append_row(row_data)
+            return True
+        except Exception as e:
+            if attempt < retries - 1:
+                time.sleep(2)
+            else:
+                st.error("Submission failed. Please try again.")
+                print("Google Sheets write error:", e)
+                return False    
+                
+@st.cache_data(ttl=30)  # Cache for x seconds, ttl=30 -> 30 seconds
+def load_data():
+    return sheet.get_all_records()
 # =========================
 # GOOGLE SHEETS SETUP
 # =========================
@@ -46,12 +63,13 @@ scope = [
     "https://www.googleapis.com/auth/drive",
 ]
 
-# Load service account from Streamlit secrets
-creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scope)
-client = gspread.authorize(creds)
+@st.cache_resource
+def get_sheet():
+    creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"])
+    client = gspread.authorize(creds)
+    return client.open_by_url(st.secrets["app"]["sheet_url"]).sheet1
 
-# Open the sheet from secrets
-sheet = client.open_by_url(st.secrets["app"]["sheet_url"]).sheet1
+sheet = get_sheet()
 
 # =========================
 # VISUALS
@@ -352,7 +370,7 @@ elif st.session_state.stage == "control_input":
             else:
                 # Check for duplicate
                 try:
-                    data = sheet.get_all_records()
+                    @st.cache_data(ttl=60)
                     df = pd.DataFrame(data)
                     df["Control_ID"] = df["Control_ID"].astype(str).str.strip()
                     df["Code"] = df["Code"].astype(str).str.strip()
@@ -435,20 +453,22 @@ Within each range, lower numbers mean worse health and higher numbers mean bette
         if submit_survey:
             ph_time = datetime.now(ZoneInfo("Asia/Manila")).strftime("%Y-%m-%d %H:%M:%S")
             new_row = [ph_time, st.session_state.church_code, st.session_state.control_id] + scores
-            try:
-                sheet.append_row(new_row)
+            
+            success = append_response(new_row)
+
+            if success:
                 st.success("✅ Your response has been submitted!")
+                # Clear cached data so next read fetches updated Google Sheet
+                st.cache_data.clear()
                 st.session_state.stage = "results"
                 st.rerun()
-            except Exception as e:
-                st.error(f"Could not submit response: {e}")
 
 # =========================
 # STAGE: Results
 # =========================
 elif st.session_state.stage == "results":
     try:
-        data = sheet.get_all_records()
+        data = load_data()
         df = pd.DataFrame(data)
         df["Code"] = df["Code"].astype(str).str.strip()
         df["Control_ID"] = df["Control_ID"].astype(str).str.strip()
@@ -511,7 +531,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
                 if start_date > end_date:
                     st.warning("⚠️ Please select a valid date range (start date must be before end date).")
                 else:
-                    data = sheet.get_all_records()
+                    data = load_data()
                     df = pd.DataFrame(data)
                     df["Code"] = df["Code"].astype(str).str.strip()
                     df["Timestamp"] = pd.to_datetime(df["Timestamp"], errors="coerce")
@@ -587,7 +607,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
             st.success(f"✅ File accepted. {len(df_upload)} control IDs loaded.")
 
             # Fetch Google Sheet data
-            data = sheet.get_all_records()
+            data = load_data()
             df_sheet = pd.DataFrame(data)
             df_sheet.columns = df_sheet.columns.str.strip().str.lower()
 
@@ -674,6 +694,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
