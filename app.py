@@ -42,7 +42,9 @@ def append_response(row_data):
     retries = 3
     for attempt in range(retries):
         try:
+            sheet = get_sheet()  # get fresh sheet each time
             sheet.append_row(row_data)
+            st.cache_data.clear()  # clear cached data so load_data() sees updates
             return True
         except Exception as e:
             if attempt < retries - 1:
@@ -50,26 +52,27 @@ def append_response(row_data):
             else:
                 st.error("Submission failed. Please try again.")
                 print("Google Sheets write error:", e)
-                return False    
+                return False
                 
 # =========================
 # GOOGLE SHEETS SETUP
 # =========================
-scope = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive",
-]
-
 def get_sheet():
-    creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"])
+    creds = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
+        scopes=[
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
+    )
     client = gspread.authorize(creds)
     return client.open_by_url(st.secrets["app"]["sheet_url"]).sheet1
 
-@st.cache_data(ttl=30)
+@st.cache_data(ttl=60)  # caches the actual rows for 60 seconds
 def load_data():
-    sheet = get_sheet()
+    sheet = get_sheet()  # fresh credentials every call
     return sheet.get_all_records()
-
+    
 # =========================
 # VISUALS
 # =========================
@@ -693,6 +696,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
