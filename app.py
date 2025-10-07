@@ -370,7 +370,7 @@ elif st.session_state.stage == "control_input":
             else:
                 # Check for duplicate
                 try:
-                    @st.cache_data(ttl=60)
+                    data = load_data()
                     df = pd.DataFrame(data)
                     df["Control_ID"] = df["Control_ID"].astype(str).str.strip()
                     df["Code"] = df["Code"].astype(str).str.strip()
@@ -694,6 +694,7 @@ with st.expander("⚙️ Other Options for Viewing/Filtering Results (Optional)"
 
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
