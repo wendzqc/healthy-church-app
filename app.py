@@ -325,7 +325,7 @@ def reset_session():
 if st.session_state.stage == "await_code":
        
     code = st.text_input(
-        "Enter your Church Code (existing or new; responses and results will be linked to this code).",
+        "Enter your Church Code (existing or new; responses and results will be linked to this code). If you’re just exploring or testing, you may use **`TEST`** as your Church Code.",
         value=st.session_state.church_code
     )
     st.caption("⚠️ Note: Codes are case-sensitive (e.g., ABC is not the same as Abc).")
@@ -655,6 +655,7 @@ with st.expander(
             st.write(f"**Interpretation:** {interpretation}")
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
