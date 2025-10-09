@@ -365,12 +365,9 @@ if st.session_state.stage == "await_code":
 # STAGE: Optional Control ID
 # =========================
 elif st.session_state.stage == "control_input":
-    #st.info("Optional: Enter a Control ID provided by your church (**leave blank** for casual or personal survey).")
-    st.markdown(
-    "> 💡 Optional: Enter a Control ID provided by your church (**leave blank** for casual or personal survey)."
-               )
+    st.info("Optional: Enter a Control ID provided by your church.")
     with st.form("control_form"):
-        control_id_input = st.text_input("Control ID", value=st.session_state.control_id)
+        control_id_input = st.text_input("Control ID (leave blank for casual or personal survey or just exploring)", value=st.session_state.control_id)
         st.caption("⚠️ Note: Control IDs are case-sensitive (e.g., A123 ≠ a123).")
         submit_control = st.form_submit_button("➡️ Proceed to Questionnaire")
         cancel_control = st.form_submit_button("❌ Cancel")
@@ -667,6 +664,7 @@ with st.expander(
             st.write(f"**Interpretation:** {interpretation}")
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
