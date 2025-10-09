@@ -176,7 +176,7 @@ st.markdown(
 # --- Title and subtitle ---
 st.title("🧭 H.E.A.L.T.H.Y. Church Checklist")
 st.markdown(
-    "<div style='font-size:13px; color:gray;'>by Jason Richard Tan and Wendell Q. Campano</div>",
+    "<div style='font-size:13px; color:gray;'>by Jason Richard Tan (jason.tan@bsop.edu.ph) and Wendell Q. Campano (wqcampano@gmail.com)</div>",
     unsafe_allow_html=True
 )
 st.divider()
@@ -655,5 +655,6 @@ with st.expander(
             st.write(f"**Interpretation:** {interpretation}")
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
