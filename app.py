@@ -258,7 +258,7 @@ for q in questions:
     main_virtues.append(virtue)
 
 st.markdown("""
-## 🙏 Welcome to the **Healthy Church Assessment App**
+## 🙏 Welcome to this **Church Health Assessment App**
 
 This tool helps churches reflect on their current health using the **H.E.A.L.T.H.Y. Church Framework**.  
 Each response contributes to a clearer picture of your church’s strengths and areas for growth.
@@ -664,6 +664,7 @@ with st.expander(
             st.write(f"**Interpretation:** {interpretation}")
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
