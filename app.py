@@ -311,7 +311,7 @@ with st.expander("📖 How to Use the App"):
 
     # Display the static QR code image
     st.image(img, caption="H.E.A.L.T.H.Y. Church App")
-    #st.image("app_qr.png", caption="Scan to open the H.E.A.L.T.H.Y. Church Checklist App", use_container_width=True)
+    #st.image("app_qr.png", caption="Scan to open the H.E.A.L.T.H.Y. Church Checklist App", width='stretch')
        
 # =========================
 # SESSION STATE INITIALIZATION
@@ -425,7 +425,7 @@ Please reflect on your church honestly, then rate your church from **1 to 10**:
 Within each range, lower numbers mean worse health and higher numbers mean better health. For example, in the 1–3 range, 1 is more unhealthy than 2, and 2 is more unhealthy than 3. This same principle applies across the scale (4–7 and 8–10): higher numbers always indicate better health.
 """
     )
-    st.image("health_continuum_dark_green.png", use_container_width=True)
+    st.image("health_continuum_dark_green.png", width='stretch')
 
     with st.form("survey_form"):
         scores = []
@@ -664,6 +664,7 @@ with st.expander(
             st.write(f"**Interpretation:** {interpretation}")
             st.subheader("🕸️ Church Health Overview")
             draw_custom_radar(avg_scores, main_virtues)
+
 
 
 
